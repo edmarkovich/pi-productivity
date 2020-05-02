@@ -3,8 +3,9 @@ import subprocess
 
 import atexit
 import time
+import secrets
 
-PC_MODE = False
+PC_MODE = True
 
 def cleanup():
     GPIO.cleanup()
@@ -31,13 +32,14 @@ if not PC_MODE:
 previous_task_count = 0
 previous_count_time = 0
 
-
+TASKS_URL = secrets.TASKS_URL
+CAL_EMAIL = secrets.CAL_EMAIL
 
 def get_task_state():
     global previous_task_count
     global previous_count_time
     
-    cmd = "wget -q -O - https://www.dropbox.com/s/lqnwp6v2agwi3wy/week-plan.org?dl=0 | fgrep '[ ]' | wc -l"
+    cmd = "wget -q -O - " + TASKS_URL + " | fgrep '[ ]' | wc -l"
     sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     count = sp.stdout.readline().strip().decode("ASCII")
     print("Tasks", count, "previous", previous_task_count)
@@ -59,7 +61,7 @@ def get_task_state():
 
 def time_to_next_appt():
     #TODO: I think there's a python lib for this
-    sp = subprocess.Popen("./pull_agenda", shell=True, stdout=subprocess.PIPE)
+    sp = subprocess.Popen("gcalcli --nocolor --calendar="+CAL_EMAIL+" agenda | grep ':' | sed 's/ \+/ /g' | cut -d' ' -f 1-4", shell=True, stdout=subprocess.PIPE)
     
     while True:
       st = sp.stdout.readline().strip().decode("ASCII")
@@ -102,9 +104,13 @@ while True:
         GPIO.output(TIME_PIN, True)
         GPIO.output(RED_PIN, True)
         GPIO.output(GREEN_PIN, True)
-        
-    task_status = get_task_state()
-    dur = time_to_next_appt()
+
+    try:
+        task_status = get_task_state()
+        dur = time_to_next_appt()
+    except Exception as e:
+        print ("Something broke", e)
+
     
     if not PC_MODE:
         show_task_status(task_status)
