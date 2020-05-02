@@ -14,7 +14,7 @@ GPIO.setmode(GPIO.BCM)
 TIME_PIN=4
 BUTTON_PIN=16
 GPIO.setup(TIME_PIN, GPIO.OUT)
-GPIO.setup(BUTOTN_PIN, GPIO.IN)
+GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 def time_to_next_appt():
     #TODO: I think there's a python lib for this
@@ -35,23 +35,23 @@ def time_to_next_appt():
     diff = appt - now
 
     out= (diff.days*24 + diff.seconds/(60*60))
-    #print(out)
+    print(out)
     return(out)
 
 GPIO.add_event_detect(BUTTON_PIN, GPIO.BOTH, bouncetime=300)        
 
 def flash_time(hours):
+  while True:
     if hours<0 or hours > 23:
         GPIO.output(TIME_PIN, False)        
-        return
-    while True:
+        time.sleep(1)
+    else:
         GPIO.output(TIME_PIN, True)
-        time.sleep(0.05)
+        time.sleep(0.2)
         GPIO.output(TIME_PIN, False)
-        time.sleep(0.2*hours)
-        if GPIO.event_detected(BUTTON_PIN):
-            print("Button Press")
-            return
+        time.sleep(0.3*hours)
+    if GPIO.event_detected(BUTTON_PIN):
+        return
     
 
 
