@@ -5,7 +5,7 @@ import atexit
 import time
 import secrets
 
-PC_MODE = True
+PC_MODE = False
 
 def cleanup():
     GPIO.cleanup()
@@ -31,6 +31,7 @@ if not PC_MODE:
     
 previous_task_count = 0
 previous_count_time = 0
+last_poll = 0
 
 TASKS_URL = secrets.TASKS_URL
 CAL_EMAIL = secrets.CAL_EMAIL
@@ -92,6 +93,13 @@ def flash_time(hours):
         time.sleep(0.3*hours)
         
     if GPIO.event_detected(BUTTON_PIN):
+        print ("Button press, will refresh")
+        return
+
+    now = datetime.datetime.now()
+    diff = now - last_poll
+    if diff.seconds > 60*1:
+        print ("Time elapsed, time to refresh")
         return
     
 def show_task_status(status):
@@ -100,6 +108,7 @@ def show_task_status(status):
     
 
 while True:
+    last_poll
     if not PC_MODE:
         GPIO.output(TIME_PIN, True)
         GPIO.output(RED_PIN, True)
@@ -108,6 +117,7 @@ while True:
     try:
         task_status = get_task_state()
         dur = time_to_next_appt()
+        last_poll = datetime.datetime.now()
     except Exception as e:
         print ("Something broke", e)
 
