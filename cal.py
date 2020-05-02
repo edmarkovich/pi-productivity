@@ -45,7 +45,7 @@ def flash_time(hours):
         GPIO.output(TIME_PIN, True)
         time.sleep(0.05)
         GPIO.output(TIME_PIN, False)
-        time.sleep(0.05*hours)
+        time.sleep(0.2*hours)
     
         
 
