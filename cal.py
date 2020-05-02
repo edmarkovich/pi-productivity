@@ -9,6 +9,7 @@ def cleanup():
     print("BYE")
 
 atexit.register(cleanup)
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(4, GPIO.OUT)
 
 def time_to_next_appt():
