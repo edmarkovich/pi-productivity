@@ -1,1 +1,1 @@
- gcalcli --nocolor --calendar="ed.markovich@gmail.com" agenda | grep ":" | head -1 | sed "s/ \+/ /g" | cut -d' ' -f 1-4
+ gcalcli --nocolor --calendar="ed.markovich@gmail.com" agenda | grep ":" | sed "s/ \+/ /g" | cut -d' ' -f 1-4
