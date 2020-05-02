@@ -1,26 +1,61 @@
 import datetime
 import subprocess
-import RPi.GPIO as GPIO
+
 import atexit
 import time
+
+PC_MODE = False
 
 def cleanup():
     GPIO.cleanup()
     print("BYE")
 
-atexit.register(cleanup)
-GPIO.setmode(GPIO.BCM)
+if not PC_MODE:
+    import RPi.GPIO as GPIO
+    atexit.register(cleanup)
+    GPIO.setmode(GPIO.BCM)
 
-TIME_PIN=4
-BUTTON_PIN=16
-GPIO.setup(TIME_PIN, GPIO.OUT)
-GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    TIME_PIN=4
+    BUTTON_PIN=16
+    RED_PIN=12
+    GREEN_PIN=26
+    
+    GPIO.setup(TIME_PIN, GPIO.OUT)
+    GPIO.setup(RED_PIN, GPIO.OUT)
+    GPIO.setup(GREEN_PIN, GPIO.OUT)
+    
+    GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-def get_task_count():
+    GPIO.add_event_detect(BUTTON_PIN, GPIO.BOTH, bouncetime=300)        
+    
+previous_task_count = 0
+previous_count_time = 0
+
+
+
+def get_task_state():
+    global previous_task_count
+    global previous_count_time
+    
     cmd = "wget -q -O - https://www.dropbox.com/s/lqnwp6v2agwi3wy/week-plan.org?dl=0 | fgrep '[ ]' | wc -l"
     sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     count = sp.stdout.readline().strip().decode("ASCII")
-    print("Tasks", count)
+    print("Tasks", count, "previous", previous_task_count)
+
+    now = datetime.datetime.now()
+
+    if count != previous_task_count:
+        print ("Nice, the count has changed")
+        previous_task_count=count
+        previous_count_time=now
+        return True
+
+    diff = now - previous_count_time
+    print ("Seconds since change: ", diff)
+    if diff.seconds > 30:
+        return False
+    else:
+        return True
 
 def time_to_next_appt():
     #TODO: I think there's a python lib for this
@@ -42,7 +77,6 @@ def time_to_next_appt():
         print (out)
         return out
 
-GPIO.add_event_detect(BUTTON_PIN, GPIO.BOTH, bouncetime=300)        
 
 def flash_time(hours):
   while True:
@@ -54,13 +88,25 @@ def flash_time(hours):
         time.sleep(0.2)
         GPIO.output(TIME_PIN, False)
         time.sleep(0.3*hours)
+        
     if GPIO.event_detected(BUTTON_PIN):
         return
     
-
+def show_task_status(status):
+    GPIO.output(GREEN_PIN, status)
+    GPIO.output(RED_PIN, not status)
+    
 
 while True:
-    GPIO.output(TIME_PIN, True)
-    get_task_count()
+    if not PC_MODE:
+        GPIO.output(TIME_PIN, True)
+        GPIO.output(RED_PIN, True)
+        GPIO.output(GREEN_PIN, True)
+        
+    task_status = get_task_state()
     dur = time_to_next_appt()
-    flash_time(dur)
+    
+    if not PC_MODE:
+        show_task_status(task_status)
+        flash_time(dur)
+    else: break
