@@ -1,0 +1,2 @@
+TASKS_URL=""
+CAL_EMAIL=""
