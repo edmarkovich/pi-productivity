@@ -16,13 +16,18 @@ BUTTON_PIN=16
 GPIO.setup(TIME_PIN, GPIO.OUT)
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
+def get_task_count():
+    cmd = "wget -q -O - https://www.dropbox.com/s/lqnwp6v2agwi3wy/week-plan.org?dl=0 | fgrep '[ ]' | wc -l"
+    sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    count = sp.stdout.readline().strip().decode("ASCII")
+    print("Tasks", count)
+
 def time_to_next_appt():
     #TODO: I think there's a python lib for this
     sp = subprocess.Popen("./pull_agenda", shell=True, stdout=subprocess.PIPE)
     
     while True:
       st = sp.stdout.readline().strip().decode("ASCII")
-      print(st)
       if not st: return -1
     
       appt = datetime.datetime.strptime(st, '%a %b %d %I:%M%p')
@@ -56,5 +61,6 @@ def flash_time(hours):
 
 while True:
     GPIO.output(TIME_PIN, True)
+    get_task_count()
     dur = time_to_next_appt()
     flash_time(dur)
