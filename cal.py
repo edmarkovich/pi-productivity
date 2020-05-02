@@ -10,7 +10,9 @@ def cleanup():
 
 atexit.register(cleanup)
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(4, GPIO.OUT)
+
+TIME_PIN=4
+GPIO.setup(TIME_PIN, GPIO.OUT)
 
 def time_to_next_appt():
     #TODO: I think there's a python lib for this
@@ -35,11 +37,17 @@ def time_to_next_appt():
     return(out)
 
 
-dur = time_to_next_appt()
-if dur == -1:
-    GPIO.output(4, False)
-else:
-    GPIO.output(4, True)
-
+def flash_time(hours):
+    if hours<0 or hours > 23:
+        GPIO.output(TIME_PIN, False)        
+        return
+    while True:
+        GPIO.output(TIME_PIN, True)
+        time.sleep(0.05)
+        GPIO.output(TIME_PIN, False)
+        time.sleep(0.05*hours)
     
-time.sleep(3)
+        
+
+dur = time_to_next_appt()
+flash_time(dur)
