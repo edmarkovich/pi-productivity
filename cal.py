@@ -98,7 +98,7 @@ def flash_time(hours):
 
     now = datetime.datetime.now()
     diff = now - last_poll
-    if diff.seconds > 60*1:
+    if diff.seconds > 60*60:
         print ("Time elapsed, time to refresh")
         return
     
