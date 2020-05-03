@@ -55,7 +55,7 @@ def get_task_state():
 
     diff = now - previous_count_time
     print ("Seconds since change: ", diff)
-    if diff.seconds > 30:
+    if diff.seconds > 60*60*3: #Did nothing for 3 hours?!
         return False
     else:
         return True
@@ -101,14 +101,38 @@ def flash_time(hours):
     if diff.seconds > 60*60:
         print ("Time elapsed, time to refresh")
         return
-    
+   
+ 
 def show_task_status(status):
-    GPIO.output(GREEN_PIN, status)
-    GPIO.output(RED_PIN, not status)
-    
+    dur = 0.05
+    if status:
+         GPIO.output(TIME_PIN, False)
+         time.sleep(dur)
+         GPIO.output(RED_PIN, False)
+         time.sleep(dur)
+         GPIO.output(GREEN_PIN, False)
+         time.sleep(dur)
+         for x in range(0,6):
+            GPIO.output(TIME_PIN, True)
+            time.sleep(dur)
+            GPIO.output(RED_PIN, True)
+            time.sleep(dur)
+            GPIO.output(GREEN_PIN, True)
+            time.sleep(dur)
+            GPIO.output(TIME_PIN, False)
+            time.sleep(dur)
+            GPIO.output(RED_PIN, False)
+            time.sleep(dur)
+            GPIO.output(GREEN_PIN, False)
+            time.sleep(dur)
+         #time.sleep(0.5)
+         GPIO.output(GREEN_PIN, True)
+    else:
+            GPIO.output(RED_PIN, True)
+            GPIO.output(GREEN_PIN, False)
+    time.sleep(2) 
 
 while True:
-    last_poll
     if not PC_MODE:
         GPIO.output(TIME_PIN, True)
         GPIO.output(RED_PIN, True)
