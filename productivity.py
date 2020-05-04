@@ -34,7 +34,8 @@ previous_count_time = 0
 last_poll = 0
 
 TASKS_URL = secrets.TASKS_URL
-CAL_EMAIL = secrets.CAL_EMAIL
+CAL1 = secrets.CAL1
+CAL2 = secrets.CAL2
 
 def get_task_state():
     global previous_task_count
@@ -62,13 +63,21 @@ def get_task_state():
 
 def time_to_next_appt():
     #TODO: I think there's a python lib for this
-    sp = subprocess.Popen("gcalcli --nocolor --calendar="+CAL_EMAIL+" agenda | grep ':' | sed 's/ \+/ /g' | cut -d' ' -f 1-4", shell=True, stdout=subprocess.PIPE)
+    cmd="gcalcli --nocolor --calendar='"+CAL1+"' --calendar='"+CAL2+"' agenda | grep ':' | sed 's/ \+/ /g' | cut -d' ' -f 1-4"
+    sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     
     while True:
       st = sp.stdout.readline().strip().decode("ASCII")
       if not st: return -1
-    
-      appt = datetime.datetime.strptime(st, '%a %b %d %I:%M%p')
+   
+      try: 
+        appt = datetime.datetime.strptime(st, '%a %b %d %I:%M%p')
+      except Exception as e:
+        #if here, assume for now it's today but 2nd+ item and first is already past
+        st = st.split()[0]
+        appt2 = datetime.datetime.strptime(st, '%I:%M%p')
+        appt2 = appt2.replace(year = appt.year, month = appt.month, day = appt.day)
+        appt = appt2
       #this won't work right near new years eve but who cares
       appt = appt.replace(year=datetime.datetime.now().year)
 
@@ -77,7 +86,7 @@ def time_to_next_appt():
 
       out= (diff.days*24 + diff.seconds/(60*60))
       if out > 0: 
-        print (out)
+        print ("Next Appt:",appt,out)
         return out
 
 
