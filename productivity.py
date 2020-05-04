@@ -20,10 +20,12 @@ if not PC_MODE:
     BUTTON_PIN=16
     RED_PIN=12
     GREEN_PIN=26
+    YELLOW_PIN=17
     
     GPIO.setup(TIME_PIN, GPIO.OUT)
     GPIO.setup(RED_PIN, GPIO.OUT)
     GPIO.setup(GREEN_PIN, GPIO.OUT)
+    GPIO.setup(YELLOW_PIN, GPIO.OUT)
     
     GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
@@ -63,7 +65,7 @@ def get_task_state():
 
 def time_to_next_appt():
     #TODO: I think there's a python lib for this
-    cmd="gcalcli --nocolor --calendar='"+CAL1+"' --calendar='"+CAL2+"' agenda | grep ':' | sed 's/ \+/ /g' | cut -d' ' -f 1-4"
+    cmd="gcalcli --nocolor --calendar='"+CAL1+"' --calendar='"+CAL2+"' agenda | grep ':' | fgrep -v '(Jamie Class)' | sed 's/ \+/ /g' | cut -d' ' -f 1-4"
     sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     
     while True:
@@ -115,6 +117,8 @@ def flash_time(hours):
 def show_task_status(status):
     dur = 0.05
     if status:
+         GPIO.output(YELLOW_PIN, False)
+         time.sleep(dur)
          GPIO.output(TIME_PIN, False)
          time.sleep(dur)
          GPIO.output(RED_PIN, False)
@@ -122,11 +126,15 @@ def show_task_status(status):
          GPIO.output(GREEN_PIN, False)
          time.sleep(dur)
          for x in range(0,6):
+            GPIO.output(YELLOW_PIN, True)
+            time.sleep(dur)
             GPIO.output(TIME_PIN, True)
             time.sleep(dur)
             GPIO.output(RED_PIN, True)
             time.sleep(dur)
             GPIO.output(GREEN_PIN, True)
+            time.sleep(dur)
+            GPIO.output(YELLOW_PIN, False)
             time.sleep(dur)
             GPIO.output(TIME_PIN, False)
             time.sleep(dur)
@@ -146,6 +154,7 @@ while True:
         GPIO.output(TIME_PIN, True)
         GPIO.output(RED_PIN, True)
         GPIO.output(GREEN_PIN, True)
+        GPIO.output(YELLOW_PIN, True)
 
     try:
         task_status = get_task_state()
@@ -156,6 +165,7 @@ while True:
 
     
     if not PC_MODE:
+        GPIO.output(YELLOW_PIN, False)
         show_task_status(task_status)
         flash_time(dur)
     else: break
