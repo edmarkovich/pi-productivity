@@ -113,6 +113,23 @@ def flash_time(hours):
         print ("Time elapsed, time to refresh")
         return
    
+import random
+def light_show():
+    for x in range(0,110):
+        pin = 0
+        rnd = random.randint(0,3)
+        if rnd==0:
+            pin=YELLOW_PIN
+        elif rnd==1:
+            pin=GREEN_PIN
+        elif rnd==2:
+            pin=RED_PIN
+        elif rnd==3:
+            pin=TIME_PIN
+        GPIO.output(pin, random.randint(0,1))
+        time.sleep(.05)
+        
+
  
 def show_task_status(status):
     dur = 0.05
@@ -165,6 +182,7 @@ while True:
 
     
     if not PC_MODE:
+        light_show()
         GPIO.output(YELLOW_PIN, False)
         show_task_status(task_status)
         flash_time(dur)
