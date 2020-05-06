@@ -1,49 +1,35 @@
 import datetime
 import subprocess
-
+import random
 import atexit
 import time
 import secrets
+import lights
 
 PC_MODE = False
 
 def cleanup():
     GPIO.cleanup()
-    print("BYE")
+
 
 if not PC_MODE:
     import RPi.GPIO as GPIO
     atexit.register(cleanup)
     GPIO.setmode(GPIO.BCM)
 
-    TIME_PIN=4
     BUTTON_PIN=16
-    RED_PIN=12
-    GREEN_PIN=26
-    YELLOW_PIN=17
-    
-    GPIO.setup(TIME_PIN, GPIO.OUT)
-    GPIO.setup(RED_PIN, GPIO.OUT)
-    GPIO.setup(GREEN_PIN, GPIO.OUT)
-    GPIO.setup(YELLOW_PIN, GPIO.OUT)
-    
     GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
     GPIO.add_event_detect(BUTTON_PIN, GPIO.BOTH, bouncetime=300)        
     
 previous_task_count = 0
 previous_count_time = 0
 last_poll = 0
 
-TASKS_URL = secrets.TASKS_URL
-CAL1 = secrets.CAL1
-CAL2 = secrets.CAL2
-
 def get_task_state():
     global previous_task_count
     global previous_count_time
     
-    cmd = "wget -q -O - " + TASKS_URL + " | fgrep '[ ]' | wc -l"
+    cmd = "wget -q -O - " + secrets.TASKS_URL + " | fgrep '[ ]' | wc -l"
     sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     count = sp.stdout.readline().strip().decode("ASCII")
     print("Tasks", count, "previous", previous_task_count)
@@ -51,21 +37,15 @@ def get_task_state():
     now = datetime.datetime.now()
 
     if count != previous_task_count:
-        print ("Nice, the count has changed")
-        previous_task_count=count
-        previous_count_time=now
+        previous_task_count = count
+        previous_count_time = now
         return True
 
     diff = now - previous_count_time
-    print ("Seconds since change: ", diff)
-    if diff.seconds > 60*60*3: #Did nothing for 3 hours?!
-        return False
-    else:
-        return True
+    return diff.seconds < 60*60*3
 
 def time_to_next_appt():
-    #TODO: I think there's a python lib for this
-    cmd="gcalcli --nocolor --calendar='"+CAL1+"' --calendar='"+CAL2+"' agenda | grep ':' | fgrep -v '(Jamie Class)' | sed 's/ \+/ /g' | cut -d' ' -f 1-4"
+    cmd="gcalcli --nocolor --calendar='"+secrets.CAL1+"' --calendar='"+secrets.CAL2+"' agenda | grep ':' | fgrep -v '(Jamie Class)' | sed 's/ \+/ /g' | cut -d' ' -f 1-4"
     sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     
     while True:
@@ -83,26 +63,14 @@ def time_to_next_appt():
       #this won't work right near new years eve but who cares
       appt = appt.replace(year=datetime.datetime.now().year)
 
-      now = datetime.datetime.now()
-      diff = appt - now
+      diff = appt - datetime.datetime.now()
 
-      out= (diff.days*24 + diff.seconds/(60*60))
+      out = (diff.days*24 + diff.seconds/(60*60))
       if out > 0: 
         print ("Next Appt:",appt,out)
         return out
 
-
-def flash_time(hours):
-  while True:
-    if hours<0 or hours > 23:
-        GPIO.output(TIME_PIN, False)        
-        time.sleep(1)
-    else:
-        GPIO.output(TIME_PIN, True)
-        time.sleep(0.2)
-        GPIO.output(TIME_PIN, False)
-        time.sleep(0.3*hours)
-        
+#RE-POLL LOGIC
     if GPIO.event_detected(BUTTON_PIN):
         print ("Button press, will refresh")
         return
@@ -112,66 +80,11 @@ def flash_time(hours):
     if diff.seconds > 60*60:
         print ("Time elapsed, time to refresh")
         return
-   
-import random
-def light_show():
-    for x in range(0,110):
-        pin = 0
-        rnd = random.randint(0,3)
-        if rnd==0:
-            pin=YELLOW_PIN
-        elif rnd==1:
-            pin=GREEN_PIN
-        elif rnd==2:
-            pin=RED_PIN
-        elif rnd==3:
-            pin=TIME_PIN
-        GPIO.output(pin, random.randint(0,1))
-        time.sleep(.05)
-        
-
  
-def show_task_status(status):
-    dur = 0.05
-    if status:
-         GPIO.output(YELLOW_PIN, False)
-         time.sleep(dur)
-         GPIO.output(TIME_PIN, False)
-         time.sleep(dur)
-         GPIO.output(RED_PIN, False)
-         time.sleep(dur)
-         GPIO.output(GREEN_PIN, False)
-         time.sleep(dur)
-         for x in range(0,6):
-            GPIO.output(YELLOW_PIN, True)
-            time.sleep(dur)
-            GPIO.output(TIME_PIN, True)
-            time.sleep(dur)
-            GPIO.output(RED_PIN, True)
-            time.sleep(dur)
-            GPIO.output(GREEN_PIN, True)
-            time.sleep(dur)
-            GPIO.output(YELLOW_PIN, False)
-            time.sleep(dur)
-            GPIO.output(TIME_PIN, False)
-            time.sleep(dur)
-            GPIO.output(RED_PIN, False)
-            time.sleep(dur)
-            GPIO.output(GREEN_PIN, False)
-            time.sleep(dur)
-         #time.sleep(0.5)
-         GPIO.output(GREEN_PIN, True)
-    else:
-            GPIO.output(RED_PIN, True)
-            GPIO.output(GREEN_PIN, False)
-    time.sleep(2) 
 
 while True:
     if not PC_MODE:
-        GPIO.output(TIME_PIN, True)
-        GPIO.output(RED_PIN, True)
-        GPIO.output(GREEN_PIN, True)
-        GPIO.output(YELLOW_PIN, True)
+        lights.all_on()
 
     try:
         task_status = get_task_state()
@@ -182,8 +95,8 @@ while True:
 
     
     if not PC_MODE:
-        light_show()
-        GPIO.output(YELLOW_PIN, False)
-        show_task_status(task_status)
-        flash_time(dur)
+        lights.light_show()
+        
+        lights.show_task_status(task_status)
+        lights.flash_time(dur)
     else: break
