@@ -21,7 +21,6 @@ def all_on():
 
 
 def flash_time(hours):
-  while True:
     if hours<0 or hours > 23:
         GPIO.output(TIME_PIN, False)        
         time.sleep(1)
@@ -42,6 +41,8 @@ def light_show():
         GPIO.output(pin, random.randint(0,1))
         time.sleep(.05)
     GPIO.output(YELLOW_PIN, False)
+
+def light_scan()
     
 def show_task_status(status):
     dur = 0.05
@@ -75,4 +76,5 @@ def show_task_status(status):
     else:
             GPIO.output(RED_PIN, True)
             GPIO.output(GREEN_PIN, False)
-    time.sleep(2) 
+    time.sleep(2)
+            

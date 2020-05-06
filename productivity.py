@@ -5,20 +5,17 @@ import time
 import secrets
 import lights
 
-PC_MODE = False
-
 def cleanup():
     GPIO.cleanup()
 
 
-if not PC_MODE:
-    import RPi.GPIO as GPIO
-    atexit.register(cleanup)
-    GPIO.setmode(GPIO.BCM)
+import RPi.GPIO as GPIO
+atexit.register(cleanup)
+GPIO.setmode(GPIO.BCM)
 
-    BUTTON_PIN=16
-    GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.add_event_detect(BUTTON_PIN, GPIO.BOTH, bouncetime=300)        
+BUTTON_PIN=16
+GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.add_event_detect(BUTTON_PIN, GPIO.BOTH, bouncetime=300)        
     
 previous_task_count = 0
 previous_count_time = 0
@@ -69,21 +66,10 @@ def time_to_next_appt():
         print ("Next Appt:",appt,out)
         return out
 
-#RE-POLL LOGIC
-    if GPIO.event_detected(BUTTON_PIN):
-        print ("Button press, will refresh")
-        return
-
-    now = datetime.datetime.now()
-    diff = now - last_poll
-    if diff.seconds > 60*60:
-        print ("Time elapsed, time to refresh")
-        return
  
 
 while True:
-    if not PC_MODE:
-        lights.all_on()
+    lights.all_on()
 
     try:
         task_status = get_task_state()
@@ -93,9 +79,22 @@ while True:
         print ("Something broke", e)
 
     
-    if not PC_MODE:
-        lights.light_show()
+    lights.light_show()
+    lights.show_task_status(task_status)
+
+
+    lights.flash_time(dur)
+
+    while True:
+       #RE-POLL LOGIC
+       if GPIO.event_detected(BUTTON_PIN):
+           print ("Button press, will refresh")
+           break
+
+       now = datetime.datetime.now()
+       diff = now - last_poll
+       if diff.seconds > 60*60:
+           print ("Time elapsed, time to refresh")
+           break
         
-        lights.show_task_status(task_status)
-        lights.flash_time(dur)
-    else: break
+       time.sleep(2) 
