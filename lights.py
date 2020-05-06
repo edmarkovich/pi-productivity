@@ -2,7 +2,6 @@ import RPi.GPIO as GPIO
 import time
 import random
 
-GPIO.setmode(GPIO.BCM)
 TIME_PIN=4
 RED_PIN=12
 GREEN_PIN=26
@@ -13,11 +12,11 @@ GPIO.setup(RED_PIN, GPIO.OUT)
 GPIO.setup(GREEN_PIN, GPIO.OUT)
 GPIO.setup(YELLOW_PIN, GPIO.OUT)
 
-def all_on():
-    GPIO.output(TIME_PIN, True)
-    GPIO.output(RED_PIN, True)
-    GPIO.output(GREEN_PIN, True)
-    GPIO.output(YELLOW_PIN, True)
+def all_on(state):
+    GPIO.output(TIME_PIN, state)
+    GPIO.output(RED_PIN, state)
+    GPIO.output(GREEN_PIN, state)
+    GPIO.output(YELLOW_PIN, state)
 
 
 def flash_time(hours):
@@ -42,7 +41,6 @@ def light_show():
         time.sleep(.05)
     GPIO.output(YELLOW_PIN, False)
 
-def light_scan()
     
 def show_task_status(status):
     dur = 0.05

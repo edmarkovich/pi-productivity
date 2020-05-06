@@ -3,19 +3,19 @@ import subprocess
 import atexit
 import time
 import secrets
-import lights
 
 def cleanup():
     GPIO.cleanup()
 
 
 import RPi.GPIO as GPIO
-atexit.register(cleanup)
 GPIO.setmode(GPIO.BCM)
+import lights
+
+atexit.register(cleanup)
 
 BUTTON_PIN=16
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.add_event_detect(BUTTON_PIN, GPIO.BOTH, bouncetime=300)        
     
 previous_task_count = 0
 previous_count_time = 0
@@ -68,9 +68,9 @@ def time_to_next_appt():
 
  
 
+GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, bouncetime=300)        
 while True:
-    lights.all_on()
-
+    lights.all_on(True)
     try:
         task_status = get_task_state()
         dur = time_to_next_appt()
@@ -88,8 +88,17 @@ while True:
     while True:
        #RE-POLL LOGIC
        if GPIO.event_detected(BUTTON_PIN):
-           print ("Button press, will refresh")
-           break
+           lights.all_on(True)
+           time.sleep(3)
+           if GPIO.input(BUTTON_PIN) == True:
+                lights.all_on(False)
+                time.sleep(1)
+                print ("Button press, will refresh")
+                break
+           else:
+                print("Just Fun")
+                lights.light_show()
+                lights.show_task_status(task_status)
 
        now = datetime.datetime.now()
        diff = now - last_poll
