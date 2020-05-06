@@ -29,50 +29,24 @@ def flash_time(hours):
         GPIO.output(TIME_PIN, False)
         time.sleep(0.3*hours)
 
+
+def flash_pin(pin):
+             GPIO.output(pin, True)
+             time.sleep(.10)
+             GPIO.output(pin, False)
+
 def light_show():
-    for x in range(0,110):
-        pin = 0
-        rnd = random.randint(0,3)
-        if rnd==0:   pin=YELLOW_PIN
-        elif rnd==1: pin=GREEN_PIN
-        elif rnd==2: pin=RED_PIN
-        elif rnd==3: pin=TIME_PIN
-        GPIO.output(pin, random.randint(0,1))
-        time.sleep(.05)
+    for x in range(0,10):
+        for pin  in [YELLOW_PIN, TIME_PIN, RED_PIN, GREEN_PIN]:
+            flash_pin(pin)
+    for x in range(0,10):
+        for pin  in [GREEN_PIN,RED_PIN,TIME_PIN,YELLOW_PIN]:
+            flash_pin(pin)
     GPIO.output(YELLOW_PIN, False)
 
     
 def show_task_status(status):
-    dur = 0.05
-    if status:
-         GPIO.output(YELLOW_PIN, False)
-         time.sleep(dur)
-         GPIO.output(TIME_PIN, False)
-         time.sleep(dur)
-         GPIO.output(RED_PIN, False)
-         time.sleep(dur)
-         GPIO.output(GREEN_PIN, False)
-         time.sleep(dur)
-         for x in range(0,6):
-            GPIO.output(YELLOW_PIN, True)
-            time.sleep(dur)
-            GPIO.output(TIME_PIN, True)
-            time.sleep(dur)
-            GPIO.output(RED_PIN, True)
-            time.sleep(dur)
-            GPIO.output(GREEN_PIN, True)
-            time.sleep(dur)
-            GPIO.output(YELLOW_PIN, False)
-            time.sleep(dur)
-            GPIO.output(TIME_PIN, False)
-            time.sleep(dur)
-            GPIO.output(RED_PIN, False)
-            time.sleep(dur)
-            GPIO.output(GREEN_PIN, False)
-            time.sleep(dur)
-         GPIO.output(GREEN_PIN, True)
-    else:
-            GPIO.output(RED_PIN, True)
-            GPIO.output(GREEN_PIN, False)
-    time.sleep(2)
+        GPIO.output(RED_PIN, not status)
+        GPIO.output(GREEN_PIN, status)
+        time.sleep(2)
             

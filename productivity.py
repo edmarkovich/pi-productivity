@@ -47,19 +47,18 @@ def time_to_next_appt():
     while True:
       st = sp.stdout.readline().strip().decode("ASCII")
       if not st: return -1
-   
+      now=datetime.datetime.now() 
       try: 
         appt = datetime.datetime.strptime(st, '%a %b %d %I:%M%p')
       except Exception as e:
         #if here, assume for now it's today but 2nd+ item and first is already past
         st = st.split()[0]
-        appt2 = datetime.datetime.strptime(st, '%I:%M%p')
-        appt2 = appt2.replace(year = appt.year, month = appt.month, day = appt.day)
-        appt = appt2
+        appt = datetime.datetime.strptime(st, '%I:%M%p')
+        appt = appt.replace(year = now.year, month = now.month, day = now.day)
       #this won't work right near new years eve but who cares
       appt = appt.replace(year=datetime.datetime.now().year)
 
-      diff = appt - datetime.datetime.now()
+      diff = appt - now
 
       out = (diff.days*24 + diff.seconds/(60*60))
       if out > 0: 
@@ -68,24 +67,22 @@ def time_to_next_appt():
 
  
 
-GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, bouncetime=300)        
+GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, bouncetime=10000)        
 while True:
     lights.all_on(True)
-    try:
-        task_status = get_task_state()
-        dur = time_to_next_appt()
-        last_poll = datetime.datetime.now()
-    except Exception as e:
-        print ("Something broke", e)
+    task_status = get_task_state()
+    dur = time_to_next_appt()
+    last_poll = datetime.datetime.now()
 
     
     lights.light_show()
     lights.show_task_status(task_status)
 
 
-    lights.flash_time(dur)
 
     while True:
+       lights.flash_time(dur)
+
        #RE-POLL LOGIC
        if GPIO.event_detected(BUTTON_PIN):
            lights.all_on(True)
@@ -98,6 +95,9 @@ while True:
            else:
                 print("Just Fun")
                 lights.light_show()
+                lights.all_on(True)
+                time.sleep(0.5)
+                lights.all_on(False)
                 lights.show_task_status(task_status)
 
        now = datetime.datetime.now()
