@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO
 import time
-    
+import random
+
+GPIO.setmode(GPIO.BCM)
 TIME_PIN=4
 RED_PIN=12
 GREEN_PIN=26

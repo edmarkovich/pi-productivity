@@ -1,6 +1,5 @@
 import datetime
 import subprocess
-import random
 import atexit
 import time
 import secrets
