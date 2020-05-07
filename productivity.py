@@ -14,7 +14,7 @@ import lights
 
 atexit.register(cleanup)
 
-BUTTON_PIN=16
+BUTTON_PIN=27
 GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     
 previous_task_count = 0
@@ -67,7 +67,7 @@ def time_to_next_appt():
 
  
 
-GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, bouncetime=10000)        
+GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, bouncetime=1000)        
 while True:
     lights.all_on(True)
     task_status = get_task_state()
@@ -85,20 +85,11 @@ while True:
 
        #RE-POLL LOGIC
        if GPIO.event_detected(BUTTON_PIN):
-           lights.all_on(True)
-           time.sleep(3)
-           if GPIO.input(BUTTON_PIN) == True:
-                lights.all_on(False)
-                time.sleep(1)
+            lights.light_show()
+            if GPIO.input(BUTTON_PIN) == True:
                 print ("Button press, will refresh")
                 break
-           else:
-                print("Just Fun")
-                lights.light_show()
-                lights.all_on(True)
-                time.sleep(0.5)
-                lights.all_on(False)
-                lights.show_task_status(task_status)
+            lights.show_task_status(task_status)
 
        now = datetime.datetime.now()
        diff = now - last_poll
@@ -106,4 +97,4 @@ while True:
            print ("Time elapsed, time to refresh")
            break
         
-       time.sleep(2) 
+       #time.sleep(2) 
