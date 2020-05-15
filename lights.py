@@ -49,6 +49,27 @@ def light_show():
         for pin  in [TIME_PIN, RED_PIN, GREEN_PIN]:
             flash_pin(pin)
     time.sleep(1)
+
+def show_percentage(percentage):
+    percentage = percentage*100
+    print("Percentage", percentage)
+    if percentage > 25:
+        flash_pin(GREEN_PIN)
+        GPIO.output(GREEN_PIN, True)
+    if percentage > 50:
+        flash_pin(RED_PIN)
+        GPIO.output(RED_PIN, True)
+    if percentage > 75:
+        flash_pin(TIME_PIN)
+        GPIO.output(TIME_PIN, True)
+    if percentage == 100:
+        flash_pin(YELLOW_PIN)
+        GPIO.output(YELLOW_PIN, True)
+    time.sleep(2) 
+    GPIO.output(GREEN_PIN, False)
+    GPIO.output(RED_PIN, False)
+    GPIO.output(TIME_PIN, False)
+    GPIO.output(YELLOW_PIN, False)
     
 def show_task_status(status):
         GPIO.output(RED_PIN, not status)
