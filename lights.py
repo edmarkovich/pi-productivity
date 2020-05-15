@@ -24,53 +24,70 @@ def flash_time(hours):
         GPIO.output(TIME_PIN, False)        
         time.sleep(1)
     else:
-        flash_pin(TIME_PIN)
+        gradual_on(TIME_PIN,True)
+        gradual_on(TIME_PIN,False)
         time.sleep(0.3*hours)
 
 
-def flash_pin(pin):
-    pwm = GPIO.PWM(pin, 100)
-    pwm.start(0)
-    for x in range(0,100,20):
-        pwm.ChangeDutyCycle(x)
-        time.sleep(0.03)
-    time.sleep(.02)
-    for x in range(100,0,-20):
-        pwm.ChangeDutyCycle(x)
-        time.sleep(0.03)
-    pwm.stop()
-    time.sleep(.02)
-   
+def gradual_on(pin, state):
+    if state:
+        start = 0
+        end   = 100
+        step  = 20
+    else:
+        start = 100
+        end   = 0
+        step  = -20
 
-def light_show():
-    for x in range(0,1):
-        for pin  in [GREEN_PIN,RED_PIN,TIME_PIN,YELLOW_PIN]:
-            flash_pin(pin)
-        for pin  in [TIME_PIN, RED_PIN, GREEN_PIN]:
-            flash_pin(pin)
-    time.sleep(1)
+    #pwm = GPIO.PWM(pin, 100)
+    #pwm.start(start)
+    #for x in range(start,end,step):
+    #    pwm.ChangeDutyCycle(x)
+    #    time.sleep(0.05)
+    #pwm.stop()
+    GPIO.output(pin, state)
+
+def blink(pin, count):
+    for x in range(0, count):
+        print("Blink")
+        gradual_on(pin, True)
+        time.sleep(0.1)
+        gradual_on(pin, False)
+        time.sleep(0.1)
+
+def show_percentile(value, pin, light_threshold, flash_threshold):
+   if value>light_threshold:
+        gradual_on(pin, True)
+        time.sleep(0.05)
+   elif value>flash_threshold:
+        blink(pin,10)
 
 def show_percentage(percentage):
+    all_on(False)
+    time.sleep(0.5)
     percentage = percentage*100
     print("Percentage", percentage)
-    if percentage > 25:
-        flash_pin(GREEN_PIN)
-        GPIO.output(GREEN_PIN, True)
-    if percentage > 50:
-        flash_pin(RED_PIN)
-        GPIO.output(RED_PIN, True)
-    if percentage > 75:
-        flash_pin(TIME_PIN)
-        GPIO.output(TIME_PIN, True)
-    if percentage == 100:
-        flash_pin(YELLOW_PIN)
-        GPIO.output(YELLOW_PIN, True)
-    time.sleep(2) 
-    GPIO.output(GREEN_PIN, False)
-    GPIO.output(RED_PIN, False)
-    GPIO.output(TIME_PIN, False)
-    GPIO.output(YELLOW_PIN, False)
     
+    show_percentile(percentage, GREEN_PIN, 25, 12.5)
+    show_percentile(percentage, RED_PIN,   50, 37.5)
+    show_percentile(percentage, TIME_PIN,  75, 62.5)
+    show_percentile(percentage, YELLOW_PIN, 100, 87.5)
+    time.sleep(2) 
+
+    if percentage == 100:
+        gradual_on(YELLOW_PIN, False)
+        time.sleep(0.1)
+    if percentage > 75:
+        gradual_on(TIME_PIN, False)
+        time.sleep(0.1)
+    if percentage > 50:
+        gradual_on(RED_PIN, False)
+        time.sleep(0.1)
+    if percentage > 25:
+        gradual_on(GREEN_PIN, False)
+
+    time.sleep(0.1)
+
 def show_task_status(status):
         GPIO.output(RED_PIN, not status)
         GPIO.output(GREEN_PIN, status)
