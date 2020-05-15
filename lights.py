@@ -49,7 +49,6 @@ def gradual_on(pin, state):
 
 def blink(pin, count):
     for x in range(0, count):
-        print("Blink")
         gradual_on(pin, True)
         time.sleep(0.1)
         gradual_on(pin, False)
