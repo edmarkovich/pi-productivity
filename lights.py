@@ -34,19 +34,19 @@ def flash_pin(pin):
     for x in range(0,100,20):
         pwm.ChangeDutyCycle(x)
         time.sleep(0.03)
-    time.sleep(.05)
+    time.sleep(.02)
     for x in range(100,0,-20):
         pwm.ChangeDutyCycle(x)
         time.sleep(0.03)
     pwm.stop()
-    time.sleep(.05)
+    time.sleep(.02)
    
 
 def light_show():
     for x in range(0,1):
         for pin  in [GREEN_PIN,RED_PIN,TIME_PIN,YELLOW_PIN]:
             flash_pin(pin)
-        for pin  in [YELLOW_PIN, TIME_PIN, RED_PIN, GREEN_PIN]:
+        for pin  in [TIME_PIN, RED_PIN, GREEN_PIN]:
             flash_pin(pin)
     time.sleep(1)
     
