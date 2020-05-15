@@ -72,7 +72,7 @@ def show_percentage(percentage):
     show_percentile(percentage, RED_PIN,   50, 37.5)
     show_percentile(percentage, TIME_PIN,  75, 62.5)
     show_percentile(percentage, YELLOW_PIN, 100, 87.5)
-    time.sleep(2) 
+    time.sleep(1) 
 
     if percentage == 100:
         gradual_on(YELLOW_PIN, False)
