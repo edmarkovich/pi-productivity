@@ -23,7 +23,8 @@ last_poll = 0
 
 
 def get_gmail_count():
-    cmd = "wget -q -O - https://www.googleapis.com/gmail/v1/users/"+secrets.CAL1+"/messages?labelIds=INBOX --header 'Authorization: Bearer " + secrets.GMAIL_TOKEN + "' | grep threadId | sort -u | wc -l"
+    cmd = "wget -O - https://www.googleapis.com/gmail/v1/users/"+secrets.CAL1+"/messages?labelIds=INBOX --header 'Authorization: Bearer " + secrets.GMAIL_TOKEN + "' | grep threadId | sort -u | wc -l"
+    print(":", cmd)
     sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     st = sp.stdout.readline().strip().decode("ASCII")
     out = int(st) 
