@@ -25,6 +25,7 @@ def flash_time(hours):
         time.sleep(1)
     else:
         gradual_on(TIME_PIN,True)
+        time.sleep(0.2)
         gradual_on(TIME_PIN,False)
         time.sleep(0.3*hours)
 
@@ -87,8 +88,10 @@ def show_percentage(percentage):
 
     time.sleep(0.1)
 
-def show_task_status(status):
+def show_task_status(status, gmail):
+        got_mail = (gmail != 0)
         GPIO.output(RED_PIN, not status)
         GPIO.output(GREEN_PIN, status)
+        GPIO.output(YELLOW_PIN, got_mail)
         time.sleep(0.7)
             

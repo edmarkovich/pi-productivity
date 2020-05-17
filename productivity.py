@@ -21,6 +21,17 @@ previous_task_count = 0
 previous_count_time = 0
 last_poll = 0
 
+
+def get_gmail_count():
+    cmd = "wget -q -O - https://www.googleapis.com/gmail/v1/users/"+secrets.CAL1+"/messages?labelIds=INBOX --header 'Authorization: Bearer " + secrets.GMAIL_TOKEN + "' | grep threadId | sort -u | wc -l"
+    sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    st = sp.stdout.readline().strip().decode("ASCII")
+    out = int(st) 
+    print("Email Count", out)
+    return out
+
+    
+
 def get_task_state():
     global previous_task_count
     global previous_count_time
@@ -81,9 +92,10 @@ while True:
     task_status, task_percentage = get_task_state()
     dur = time_to_next_appt()
     last_poll = datetime.datetime.now()
+    gmail=get_gmail_count()
 
     lights.show_percentage(task_percentage)
-    lights.show_task_status(task_status)
+    lights.show_task_status(task_status, gmail)
 
 
 
@@ -96,7 +108,7 @@ while True:
             if GPIO.input(BUTTON_PIN) == True:
                 print ("Button press, will refresh")
                 break
-            lights.show_task_status(task_status)
+            lights.show_task_status(task_status, gmail)
             continue
 
        now = datetime.datetime.now()
