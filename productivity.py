@@ -3,6 +3,7 @@ import subprocess
 import atexit
 import time
 import secrets
+import api_requests
 
 def cleanup():
     GPIO.cleanup()
@@ -22,14 +23,6 @@ previous_count_time = 0
 last_poll = 0
 
 
-def get_gmail_count():
-    cmd = "wget -O - https://www.googleapis.com/gmail/v1/users/"+secrets.CAL1+"/messages?labelIds=INBOX --header 'Authorization: Bearer " + secrets.GMAIL_TOKEN + "' | grep threadId | sort -u | wc -l"
-    print(":", cmd)
-    sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    st = sp.stdout.readline().strip().decode("ASCII")
-    out = int(st) 
-    print("Email Count", out)
-    return out
 
     
 
@@ -93,7 +86,7 @@ while True:
     task_status, task_percentage = get_task_state()
     dur = time_to_next_appt()
     last_poll = datetime.datetime.now()
-    gmail=get_gmail_count()
+    gmail=api_requests.get_gmail_count()
 
     lights.show_percentage(task_percentage)
     lights.show_task_status(task_status, gmail)
