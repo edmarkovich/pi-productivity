@@ -26,32 +26,6 @@ last_poll = 0
 
     
 
-def get_task_state():
-    global previous_task_count
-    global previous_count_time
-    
-    cmd = "wget -q -O - " + secrets.TASKS_URL # + " | fgrep '[ ]' | wc -l"
-    sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-
-    count = 0
-    done  = 0
-
-    lines = sp.stdout.readlines()
-    for line in lines:
-        line = line.strip().decode("ASCII")
-        if "[ ]" in line: count = count + 1
-        if "[X]" in line: done  = done  + 1
-    print("Tasks", count, "previous", previous_task_count, "done:" , done)
-
-    now = datetime.datetime.now()
-
-    if count != previous_task_count:
-        previous_task_count = count
-        previous_count_time = now
-        return True, done / (count+done)
-
-    diff = now - previous_count_time
-    return diff.seconds < 60*60*3, done / (count+done)
 
 def time_to_next_appt():
     cmd="gcalcli --nocolor --calendar='"+secrets.CAL1+"' --calendar='"+secrets.CAL2+"' agenda | grep ':' | fgrep -v '(Jamie Class)' | sed 's/ \+/ /g' | cut -d' ' -f 1-4"
@@ -83,7 +57,7 @@ def time_to_next_appt():
 GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, bouncetime=1000)        
 while True:
     lights.all_on(True)
-    task_status, task_percentage = get_task_state()
+    task_status, task_percentage,previous_task_count,previous_count_time = api_requests.get_task_state(previous_task_count, previous_count_time)
     dur = time_to_next_appt()
     last_poll = datetime.datetime.now()
     gmail=api_requests.get_gmail_count()
