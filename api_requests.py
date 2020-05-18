@@ -45,13 +45,14 @@ def get_task_state(previous_task_count, previous_count_time):
     done  = 0
 
     for line in r.text.split("\n"):
-        print("...", line)
         if "[X]" in line: done  = done  + 1
+        if "[ ]" in line: count  = count  + 1
 
 
     now = datetime.datetime.now()
     percent_done = done / (count+done)
-    
+   
+    print(count, previous_task_count)
     if count != previous_task_count:
         previous_task_count = count
         previous_count_time = now
