@@ -2,13 +2,27 @@ import requests
 import secrets
 import datetime
 
+def get_google_api_token():
+    url    = "https://oauth2.googleapis.com/token"
+    params = {"client_id"    :secrets.CLIENT_ID,
+              "client_secret":secrets.CLIENT_SECRET,
+              "grant_type"   :"refresh_token",
+              "refresh_token":secrets.REFRESH_TOKEN
+    }
+
+    r = requests.post(url, params=params)
+    if r.status_code != 200:
+        print("get_google_api_token issue", r.status_code, r.text)
+        return -1
+    return r.json()['access_token']
+    
 def get_gmail_count():
     url     ="https://www.googleapis.com/gmail/v1/users/"+secrets.CAL1+"/messages?labelIds=INBOX"
     headers ={"Authorization": "Bearer "  +secrets.GMAIL_TOKEN}
     r =requests.get(url, headers=headers)
     
     if r.status_code != 200:
-        print("get_gmail_count issue: ", status_code, r.text)
+        print("get_gmail_count issue: ", r.status_code, r.text)
         return -1
     messages= r.json()['messages']
     threads=set()
@@ -49,4 +63,7 @@ def get_task_state(previous_task_count, previous_count_time):
     print("Tasks", count, "previous", previous_task_count, "done:" , done)
     return good_with_tasks, percent_done, previous_task_count,previous_count_time
 
+
+print(get_google_api_token())
+print(get_google_api_token())
 
