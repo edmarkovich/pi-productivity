@@ -24,59 +24,53 @@ last_poll = 0
 
 
 
-    
+def good_with_tasks(count):
+    global previous_task_count
+    global previous_count_time
+    now = datetime.datetime.now()
+    print(count, previous_task_count)
+    if count != previous_task_count:
+        print ("good_with_tasks: task count has changed - good.",
+               count, previous_task_count)
+        previous_task_count = count
+        previous_count_time = now
+        return True
+    else:
+        diff = (now - previous_count_time).seconds
+        print ("good_with_tasks: hours since last count change:",
+               diff / 60 / 60, diff < 60*60*3)
+        return diff < 60*60*3
+        
 
 
-def time_to_next_appt():
-    cmd="gcalcli --nocolor --calendar='"+secrets.CAL1+"' --calendar='"+secrets.CAL2+"' agenda | grep ':' | fgrep -v '(Jamie Class)' | sed 's/ \+/ /g' | cut -d' ' -f 1-4"
-    sp = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    
-    while True:
-      st = sp.stdout.readline().strip().decode("ASCII")
-      if not st: return -1
-      now=datetime.datetime.now() 
-      try: 
-        appt = datetime.datetime.strptime(st, '%a %b %d %I:%M%p')
-      except Exception as e:
-        #if here, assume for now it's today but 2nd+ item and first is already past
-        st = st.split()[0]
-        appt = datetime.datetime.strptime(st, '%I:%M%p')
-        appt = appt.replace(year = now.year, month = now.month, day = now.day)
-      #this won't work right near new years eve but who cares
-      appt = appt.replace(year=datetime.datetime.now().year)
-
-      diff = appt - now
-
-      out = (diff.days*24 + diff.seconds/(60*60))
-      if out > 0: 
-        print ("Next Appt:",appt,out)
-        return out
 
  
 
 GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, bouncetime=1000)        
 while True:
     lights.all_on(True)
-    task_status, task_percentage,previous_task_count,previous_count_time = api_requests.get_task_state(previous_task_count, previous_count_time)
-    dur = time_to_next_appt()
-    last_poll = datetime.datetime.now()
-    gmail=api_requests.get_gmail_count()
 
-    lights.show_percentage(task_percentage)
-    lights.show_task_status(task_status, gmail)
+    api_states = api_requests.get_api_states()
+    task_status = good_with_tasks(api_states['undone_tasks']
+    
+    last_poll = datetime.datetime.now()
+
+
+    #lights.show_percentage(task_percentage)
+    lights.show_task_status(task_status, api_states['emails'])
 
 
 
     while True:
-       lights.flash_time(dur)
+       lights.flash_time(api_states['time_to_event'])
 
        #RE-POLL LOGIC
        if GPIO.event_detected(BUTTON_PIN):
-            lights.show_percentage(task_percentage)
+            lights.show_percentage(api_states['task_percentage'])
             if GPIO.input(BUTTON_PIN) == True:
                 print ("Button press, will refresh")
-                break
-            lights.show_task_status(task_status, gmail)
+                break            
+            lights.show_task_status(task_status, api_states['emails'])
             continue
 
        now = datetime.datetime.now()
