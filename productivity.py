@@ -41,24 +41,19 @@ def good_with_tasks(count):
                diff / 60 / 60, diff < 60*60*3)
         return diff < 60*60*3
         
-
-
-
  
 
-GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, bouncetime=1000)        
+GPIO.add_event_detect(BUTTON_PIN, GPIO.RISING, bouncetime=5000)        
 while True:
+    last_poll = datetime.datetime.now()
+    print("~~~~> ", last_poll)
     lights.all_on(True)
 
     api_states = api_requests.get_api_states()
-    task_status = good_with_tasks(api_states['undone_tasks']
+    task_status = good_with_tasks(api_states['undone_tasks'])
     
-    last_poll = datetime.datetime.now()
 
-
-    #lights.show_percentage(task_percentage)
     lights.show_task_status(task_status, api_states['emails'])
-
 
 
     while True:
@@ -66,9 +61,10 @@ while True:
 
        #RE-POLL LOGIC
        if GPIO.event_detected(BUTTON_PIN):
+            print("Button press")
             lights.show_percentage(api_states['task_percentage'])
             if GPIO.input(BUTTON_PIN) == True:
-                print ("Button press, will refresh")
+                print ("Button hold, will refresh")
                 break            
             lights.show_task_status(task_status, api_states['emails'])
             continue

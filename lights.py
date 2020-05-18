@@ -61,32 +61,21 @@ def show_percentile(value, pin, light_threshold, flash_threshold):
         time.sleep(0.05)
    elif value>flash_threshold:
         blink(pin,10)
+        return True
+   return False
 
 def show_percentage(percentage):
     all_on(False)
     time.sleep(0.5)
     percentage = percentage*100
-    print("Percentage", percentage)
     
-    show_percentile(percentage, GREEN_PIN, 25, 12.5)
-    show_percentile(percentage, RED_PIN,   50, 37.5)
-    show_percentile(percentage, TIME_PIN,  75, 62.5)
-    show_percentile(percentage, YELLOW_PIN, 100, 87.5)
-    time.sleep(1) 
+    blinked = show_percentile(percentage, GREEN_PIN, 25, 12.5)
+    blinked = blinked or show_percentile(percentage, RED_PIN,   50, 37.5)
+    blinked = blinked or show_percentile(percentage, TIME_PIN,  75, 62.5)
+    blinked = blinked or show_percentile(percentage, YELLOW_PIN, 100, 87.5)
+    if not blinked: time.sleep(1) 
+    all_on(False)
 
-    if percentage == 100:
-        gradual_on(YELLOW_PIN, False)
-        time.sleep(0.1)
-    if percentage > 75:
-        gradual_on(TIME_PIN, False)
-        time.sleep(0.1)
-    if percentage > 50:
-        gradual_on(RED_PIN, False)
-        time.sleep(0.1)
-    if percentage > 25:
-        gradual_on(GREEN_PIN, False)
-
-    time.sleep(0.1)
 
 def show_task_status(status, gmail):
         got_mail = (gmail != 0)

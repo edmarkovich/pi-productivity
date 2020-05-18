@@ -27,6 +27,11 @@ def get_gmail_count(token, addr):
     if r.status_code != 200:
         print("get_gmail_count issue: ", r.status_code, r.text)
         return -1
+
+    if not 'messages' in r.json():
+        print("get_gmail_count: no emails!")
+        return 0
+
     messages= r.json()['messages']
     threads=set()
     for msg in messages:
