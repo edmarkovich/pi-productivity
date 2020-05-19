@@ -1,6 +1,7 @@
 import requests
 import secrets
 import datetime
+import time
 from datetime import timezone
 
 def get_google_api_token():
@@ -18,12 +19,28 @@ def get_google_api_token():
     token = r.json()['access_token']
     print("get_google_api_token returning: ", token)
     return token
+
+def get_gmail_message(token, addr, msgid):
+    url     ="https://www.googleapis.com/gmail/v1/users/"+addr+"/messages/"+msgid+"?format=minimal&metadataHeaders=internalDate"
+    headers ={"Authorization": "Bearer "  + token}
+    r =requests.get(url, headers=headers)
+
+    if r.status_code != 200:
+        print("get_gmail_message issue: ", r.status_code, r.text)
+        return -1
+
+    internalDate = int(r.json()['internalDate']) / 1000
+    ageInHours = (int(time.time()) - internalDate)/60/60
+    tooOld     = ageInHours > 3 
+    print("get_gmail_message: Age:", ageInHours, "too old: ", tooOld) 
+    return tooOld
+    
     
 def get_gmail_count(token, addr):
     url     ="https://www.googleapis.com/gmail/v1/users/"+addr+"/messages?labelIds=INBOX"
     headers ={"Authorization": "Bearer "  + token}
     r =requests.get(url, headers=headers)
-    
+
     if r.status_code != 200:
         print("get_gmail_count issue: ", r.status_code, r.text)
         return -1
@@ -35,7 +52,9 @@ def get_gmail_count(token, addr):
     messages= r.json()['messages']
     threads=set()
     for msg in messages:
-        threads.add(msg['threadId'])
+        msgid = msg['id']
+        if get_gmail_message(token,addr,msgid):
+            threads.add(msg['threadId'])
     threads = len(threads)
     print ("get_gmail_count: Threads: ", threads)
     return threads
