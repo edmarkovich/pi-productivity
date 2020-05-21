@@ -2,6 +2,7 @@ import requests
 import secrets
 import datetime
 import time
+import config
 from datetime import timezone
 
 def get_google_api_token():
@@ -20,7 +21,7 @@ def get_google_api_token():
     print("get_google_api_token returning: ", token)
     return token
 
-def get_gmail_message(token, addr, msgid):
+def is_gmail_message_stale(token, addr, msgid):
     url     ="https://www.googleapis.com/gmail/v1/users/"+addr+"/messages/"+msgid+"?format=minimal&metadataHeaders=internalDate"
     headers ={"Authorization": "Bearer "  + token}
     r =requests.get(url, headers=headers)
@@ -31,12 +32,12 @@ def get_gmail_message(token, addr, msgid):
 
     internalDate = int(r.json()['internalDate']) / 1000
     ageInHours = (int(time.time()) - internalDate)/60/60
-    tooOld     = ageInHours > 24 
+    tooOld     = ageInHours > config.emailAgeThresholdHours
     print("get_gmail_message: Age:", ageInHours, "too old: ", tooOld) 
     return tooOld
     
     
-def get_gmail_count(token, addr):
+def get_stale_gmail_count(token, addr):
     url     ="https://www.googleapis.com/gmail/v1/users/"+addr+"/messages?labelIds=INBOX"
     headers ={"Authorization": "Bearer "  + token}
     r =requests.get(url, headers=headers)
@@ -53,7 +54,7 @@ def get_gmail_count(token, addr):
     threads=set()
     for msg in messages:
         msgid = msg['id']
-        if get_gmail_message(token,addr,msgid):
+        if is_gmail_message_stale(token,addr,msgid):
             threads.add(msg['threadId'])
     threads = len(threads)
     print ("get_gmail_count: Threads: ", threads)
@@ -65,7 +66,7 @@ def get_calendar_time_to_event(token, cal):
     headers = {"Authorization": "Bearer "  + token}
 
     now          = datetime.datetime.utcnow()
-    day_from_now = now + datetime.timedelta(days=1)
+    day_from_now = now + datetime.timedelta(days=config.calendarDaysOfNotice)
     
     params  = {
         "singleEvents": "True",
@@ -99,32 +100,35 @@ def get_task_state():
         print("get_task_state issue: ", r.status_code, r.text)
         return -1
 
-    count = 0
+    undone = 0
     done  = 0
 
     for line in r.text.split("\n"):
-        if "[X]" in line: done  = done  + 1
-        if "[ ]" in line: count  = count  + 1
+        if config.tasksDoneLineContains   in line: done  = done  + 1
+        if config.tasksUnDoneLineContains in line: undone  = undone  + 1
 
-    if count+done == 0:
+    if undone+done == 0:
         print("get_task_state: zero tasks in file")
         return 0,0
         
-    percent_done = done / (count+done)
-    print("get_task_state: ", count, "undone tasks, ", percent_done,"% done")
-    return count, percent_done
+    percent_done = done / (undone+done)
+    print("get_task_state: ", undone, "undone tasks, ", percent_done,"% done")
+    return undone, percent_done
+
+def get_time_to_next_event_across_calendars(token):
+    a=get_calendar_time_to_event(token, secrets.CAL1)
+    b=get_calendar_time_to_event(token, secrets.CAL2)
+    time_to_event = min(a,b)              #earliest of the two calendars
+    time_to_event = max(0, time_to_event) #if event is in progress, delta is negative
+    
 
 
 def get_api_states():
     token = get_google_api_token()
-    out = {}
-    out['emails'] = get_gmail_count(token, secrets.CAL1)
-
-    a=get_calendar_time_to_event(token, secrets.CAL1)
-    b=get_calendar_time_to_event(token, secrets.CAL2)
-    time_to_event = min(a,b)
-    out['time_to_event'] = max(0, time_to_event)
-
+    out = {
+        'emails':        get_stale_gmail_count(token, secrets.CAL1)
+        'time_to_event': get_time_to_next_event_across_calendars(token)
+    }
     out['undone_tasks'], out['task_percentage'] = get_task_state()
     return(out)
 
