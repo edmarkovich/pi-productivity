@@ -31,7 +31,7 @@ def get_gmail_message(token, addr, msgid):
 
     internalDate = int(r.json()['internalDate']) / 1000
     ageInHours = (int(time.time()) - internalDate)/60/60
-    tooOld     = ageInHours > 3 
+    tooOld     = ageInHours > 24 
     print("get_gmail_message: Age:", ageInHours, "too old: ", tooOld) 
     return tooOld
     
