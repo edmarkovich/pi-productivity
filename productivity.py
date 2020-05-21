@@ -51,6 +51,7 @@ while True:
     lights.all_on(True)
     try:
         api_states = api_requests.get_api_states()
+        print("Main Loop: API states", api_states)
     except Exception as e:
         error_count = error_count+1
         print("Main Loop: something went wrong with API calls")
@@ -73,19 +74,21 @@ while True:
     while True:
        lights.flash_time(api_states['time_to_event'])
 
-       #RE-POLL LOGIC
        if GPIO.event_detected(BUTTON_PIN):
-            print("Button press")
+            print("Main Loop: Button press")
             lights.show_percentage(api_states['task_percentage'])
+           
+            #Force re-poll logic
             if GPIO.input(BUTTON_PIN) == True:
-                print ("Button hold, will refresh")
+                print ("Main Loop: Button hold, will refresh")
                 break            
+
             lights.show_task_status(task_status, api_states['emails'])
             continue
 
        now = datetime.datetime.now()
-       diff = now - last_poll
-       if diff.seconds > 60*60:
-           print ("Time elapsed, time to refresh")
+       elapsed_hours = (now - last_poll).seconds / (60*60)
+       if elapsed_hours > 1:
+           print ("Main Loop:", elapsed_hours,"hours elapsed, time to refresh")
            break
         

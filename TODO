@@ -1,0 +1,7 @@
+
+
+* Move magic numbers out of code, into a config file. Should differ from secrets file.
+* Review API file and make sure function names are accurate.
+* Read productivity.py file and make sure there's nothing extra in it now that everything is factored out.
+* Look at lights file, make sure none of those functions are dead code. Rename functions.
+* Find a way to blink how many tasks are DONE.
