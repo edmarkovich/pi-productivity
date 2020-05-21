@@ -120,13 +120,14 @@ def get_time_to_next_event_across_calendars(token):
     b=get_calendar_time_to_event(token, secrets.CAL2)
     time_to_event = min(a,b)              #earliest of the two calendars
     time_to_event = max(0, time_to_event) #if event is in progress, delta is negative
+    return time_to_event
     
 
 
 def get_api_states():
     token = get_google_api_token()
     out = {
-        'emails':        get_stale_gmail_count(token, secrets.CAL1)
+        'emails':        get_stale_gmail_count(token, secrets.CAL1),
         'time_to_event': get_time_to_next_event_across_calendars(token)
     }
     out['undone_tasks'], out['task_percentage'] = get_task_state()

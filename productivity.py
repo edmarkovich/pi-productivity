@@ -95,4 +95,5 @@ while True:
        if elapsed_hours > config.apiPollFrequencyHours:
            print ("Main Loop:", elapsed_hours,"hours elapsed, time to refresh")
            break
+
         

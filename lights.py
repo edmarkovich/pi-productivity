@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import random
-
+import config
     
 GPIO.setup(config.TIME_PIN, GPIO.OUT)
 GPIO.setup(config.RED_PIN, GPIO.OUT)
@@ -62,7 +62,7 @@ def show_percentile(value, pin, light_threshold, flash_threshold):
 
 def show_percentage(percentage):
     all_on(False)
-    time.sleep(1.5)
+    time.sleep(1)
     percentage = percentage*100
     
     blinked = show_percentile(percentage, config.GREEN_PIN, 25, 12.5)
@@ -71,6 +71,7 @@ def show_percentage(percentage):
     blinked = blinked or show_percentile(percentage, config.YELLOW_PIN, 100, 87.5)
     if not blinked: time.sleep(1) 
     all_on(False)
+    time.sleep(1)
 
 
 def show_task_status(status, gmail):
@@ -78,5 +79,4 @@ def show_task_status(status, gmail):
         GPIO.output(config.RED_PIN, not status)
         GPIO.output(config.GREEN_PIN, status)
         GPIO.output(config.YELLOW_PIN, got_mail)
-        time.sleep(0.7)
             
