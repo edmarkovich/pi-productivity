@@ -2,31 +2,27 @@ import RPi.GPIO as GPIO
 import time
 import random
 
-TIME_PIN=12
-RED_PIN=13
-GREEN_PIN=19
-YELLOW_PIN=18
     
-GPIO.setup(TIME_PIN, GPIO.OUT)
-GPIO.setup(RED_PIN, GPIO.OUT)
-GPIO.setup(GREEN_PIN, GPIO.OUT)
-GPIO.setup(YELLOW_PIN, GPIO.OUT)
+GPIO.setup(config.TIME_PIN, GPIO.OUT)
+GPIO.setup(config.RED_PIN, GPIO.OUT)
+GPIO.setup(config.GREEN_PIN, GPIO.OUT)
+GPIO.setup(config.YELLOW_PIN, GPIO.OUT)
 
 def all_on(state):
-    GPIO.output(TIME_PIN, state)
-    GPIO.output(RED_PIN, state)
-    GPIO.output(GREEN_PIN, state)
-    GPIO.output(YELLOW_PIN, state)
+    GPIO.output(config.TIME_PIN, state)
+    GPIO.output(config.RED_PIN, state)
+    GPIO.output(config.GREEN_PIN, state)
+    GPIO.output(config.YELLOW_PIN, state)
 
 
-def flash_time(hours):
-    if hours<0 or hours > 23:
-        GPIO.output(TIME_PIN, False)        
+def flash_calendar_time_to_event(hours):
+    if hours<0 or hours > config.calendarDaysOfNotice*24:
+        GPIO.output(config.TIME_PIN, False)        
         time.sleep(1)
     else:
-        gradual_on(TIME_PIN,True)
+        gradual_on(config.TIME_PIN,True)
         time.sleep(0.2)
-        gradual_on(TIME_PIN,False)
+        gradual_on(config.TIME_PIN,False)
         time.sleep(0.3*hours)
 
 
@@ -69,18 +65,18 @@ def show_percentage(percentage):
     time.sleep(1.5)
     percentage = percentage*100
     
-    blinked = show_percentile(percentage, GREEN_PIN, 25, 12.5)
-    blinked = blinked or show_percentile(percentage, RED_PIN,   50, 37.5)
-    blinked = blinked or show_percentile(percentage, TIME_PIN,  75, 62.5)
-    blinked = blinked or show_percentile(percentage, YELLOW_PIN, 100, 87.5)
+    blinked = show_percentile(percentage, config.GREEN_PIN, 25, 12.5)
+    blinked = blinked or show_percentile(percentage, config.RED_PIN,   50, 37.5)
+    blinked = blinked or show_percentile(percentage, config.TIME_PIN,  75, 62.5)
+    blinked = blinked or show_percentile(percentage, config.YELLOW_PIN, 100, 87.5)
     if not blinked: time.sleep(1) 
     all_on(False)
 
 
 def show_task_status(status, gmail):
         got_mail = (gmail != 0)
-        GPIO.output(RED_PIN, not status)
-        GPIO.output(GREEN_PIN, status)
-        GPIO.output(YELLOW_PIN, got_mail)
+        GPIO.output(config.RED_PIN, not status)
+        GPIO.output(config.GREEN_PIN, status)
+        GPIO.output(config.YELLOW_PIN, got_mail)
         time.sleep(0.7)
             
