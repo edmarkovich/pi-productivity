@@ -66,7 +66,7 @@ def show_percentile(value, pin, light_threshold, flash_threshold):
 
 def show_percentage(percentage):
     all_on(False)
-    time.sleep(0.5)
+    time.sleep(1.5)
     percentage = percentage*100
     
     blinked = show_percentile(percentage, GREEN_PIN, 25, 12.5)
