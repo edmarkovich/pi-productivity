@@ -84,8 +84,14 @@ def get_calendar_time_to_event(token, cal):
         print("get_calendar_time_to_event: no events")
         return 999
 
-    start_time = r.json()['items'][0]['start']['dateTime']
-    start_time = datetime.datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S%z")
+    if 'dateTime' in r.json()['items'][0]['start']:
+        start_time = r.json()['items'][0]['start']['dateTime']
+        start_time = datetime.datetime.strptime(start_time, 
+            "%Y-%m-%dT%H:%M:%S%z")
+    else:
+        start_time = r.json()['items'][0]['start']['date']
+        start_time = datetime.datetime.strptime(start_time+"T00:00:00-04:00", 
+            "%Y-%m-%dT%H:%M:%S%z")
 
     diff = start_time - datetime.datetime.now(timezone.utc)
     out = (diff.days*24 + diff.seconds/(60*60))
