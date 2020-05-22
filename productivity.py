@@ -70,22 +70,23 @@ while True:
         continue    
         
     task_status = good_with_tasks(api_states['undone_tasks'])
-    
-
     lights.show_task_status(task_status, api_states['emails'])
 
 
     while True:
-       lights.flash_calendar_time_to_event(api_states['time_to_event'])
+       lights.flash_time_to_event(api_states['time_to_event'])
 
        if GPIO.event_detected(config.BUTTON_PIN):
             print("Main Loop: Button press")
-            lights.show_percentage(api_states['task_percentage'])
+            lights.show_percentage(api_states['undone_tasks'], api_states['done_tasks'])
            
             #Force re-poll logic
             if GPIO.input(config.BUTTON_PIN) == True:
                 print ("Main Loop: Button hold, will refresh")
                 break            
+            else:
+                print("Main Loop: Blink Done Tasks: ", api_states['done_tasks'])
+                lights.show_done(api_states['done_tasks'])
 
             lights.show_task_status(task_status, api_states['emails'])
             continue

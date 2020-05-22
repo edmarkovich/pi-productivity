@@ -111,9 +111,8 @@ def get_task_state():
         print("get_task_state: zero tasks in file")
         return 0,0
         
-    percent_done = done / (undone+done)
-    print("get_task_state: ", undone, "undone tasks, ", percent_done,"% done")
-    return undone, percent_done
+    print("get_task_state: ", undone, "undone tasks, ", done,"done tasks")
+    return undone, done
 
 def get_time_to_next_event_across_calendars(token):
     a=get_calendar_time_to_event(token, secrets.CAL1)
@@ -130,7 +129,7 @@ def get_api_states():
         'emails':        get_stale_gmail_count(token, secrets.CAL1),
         'time_to_event': get_time_to_next_event_across_calendars(token)
     }
-    out['undone_tasks'], out['task_percentage'] = get_task_state()
+    out['undone_tasks'], out['done_tasks'] = get_task_state()
     return(out)
 
 

@@ -14,18 +14,6 @@ def all_on(state):
     GPIO.output(config.GREEN_PIN, state)
     GPIO.output(config.YELLOW_PIN, state)
 
-
-def flash_calendar_time_to_event(hours):
-    if hours<0 or hours > config.calendarDaysOfNotice*24:
-        GPIO.output(config.TIME_PIN, False)        
-        time.sleep(1)
-    else:
-        gradual_on(config.TIME_PIN,True)
-        time.sleep(0.2)
-        gradual_on(config.TIME_PIN,False)
-        time.sleep(0.3*hours)
-
-
 def gradual_on(pin, state):
     if state:
         start = 0
@@ -44,26 +32,43 @@ def gradual_on(pin, state):
     #pwm.stop()
     GPIO.output(pin, state)
 
-def blink(pin, count):
+def blink(pin, count, fast = True):
+    delay = 0.1 if fast else 0.4
     for x in range(0, count):
         gradual_on(pin, True)
-        time.sleep(0.1)
+        time.sleep(delay)
         gradual_on(pin, False)
-        time.sleep(0.1)
+        time.sleep(delay)
+
+def flash_time_to_event(hours):
+    flash_time_to_event.counter = 0 if flash_time_to_event.counter > hours*5 else flash_time_to_event.counter + 1
+    if hours > 24:
+        gradual_on(config.TIME_PIN, False)
+    elif flash_time_to_event.counter == 0:
+        blink(config.TIME_PIN, 1)
+    if flash_time_to_event.counter == 1:
+        gradual_on(config.TIME_PIN, False)
+    time.sleep(0.1)
+flash_time_to_event.counter = 0
 
 def show_percentile(value, pin, light_threshold, flash_threshold):
    if value>light_threshold:
         gradual_on(pin, True)
         time.sleep(0.05)
    elif value>flash_threshold:
-        blink(pin,10)
+        blink(pin,5)
         return True
    return False
 
-def show_percentage(percentage):
+def show_done(done):
+            blink(config.RED_PIN, int(done/10), False)
+            blink(config.GREEN_PIN, done%10, False)
+            time.sleep(2)
+
+def show_percentage(undone,done):
     all_on(False)
     time.sleep(1)
-    percentage = percentage*100
+    percentage = 100 * done / (undone + done)
     
     blinked = show_percentile(percentage, config.GREEN_PIN, 25, 12.5)
     blinked = blinked or show_percentile(percentage, config.RED_PIN,   50, 37.5)
