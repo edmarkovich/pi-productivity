@@ -5,9 +5,9 @@
 
 
 ## What is this?
-I am more focused and productive with physical "nudges" in my environment pointing where I should be paying attention. This software/hardware combination parses my **Gmail Inbox, Google Calendars and To-Do File in Dropbox** and uses **LED lights attached to a Raspberry Pi** to flags neglected areas.
+I am more focused and productive with physical "nudges" in my environment pointing where I should be paying attention. This software/hardware combination parses my **Gmail Inbox, Google Calendars and To-Do File in Dropbox** and uses **LED lights attached to a Raspberry Pi** to flag neglected areas.
 
-This is really useful if you think about your emails, appointments and tasks slimilarly to how I do, which I briefly describe below. These aren't simple notifiers but carefully tailored strategic reminders.
+This is really useful if you think about your emails, appointments and tasks slimilarly to how I do, which I briefly describe below. These aren't simple notifiers but carefully tailored strategic nudges.
 
 ## Warning
 If you actually want to make this for yourself, there are two technical hurdles to overcome.
