@@ -39,25 +39,25 @@ In my latest implementation, I soldered the electronics onto a shield board that
 | | On button press, the LEDs briefly indicate what percentage of all tasks are done, and flash the specific number of tasks done | This is both to provide a quick insight into my progress and to provide a fun/interactive aspect.
 
 ### Calendars
-- The blue LED behavior is driven by a pair of calendars - my personal and one I share with my wife. The frequency of the light is based on hwo far away the soonest event is on either calendar. If neither calendar has an event in the next 24 hours, the blue light is off.
+- The blue LED behavior is driven by a pair of calendars - my personal and one I share with my wife. The frequency of the light is based on how far away the soonest event is on either calendar. If neither calendar has an event in the next 24 hours, the blue light is off.
 
 ### TODO List
-- I synch my todo list using Dropbox, and this program accesss it using a URL over HTTP. So there's nothing Dropbox specific about the implementation. It can be any file accessible over the web.
+- I synch my todo list using Dropbox, and this program pulls it over HTTPS. So there's nothing Dropbox specific about the implementation. It can be any file accessible over the web.
 - My TODO list is a free-form file, actually an ASCII table, though yours doesn't have to be. This program considers any line with characters "[ ]" (bracket-space-bracket) in it as an undone item, and any line with "[X]" as a done item.  Both of these patterns are configurable.
 - On each refresh, the program checks the number of currently-undone tasks to the previous number. If the number hasn't changed in 3 hours (this is configurable), it lights up the red LED.
 - If the number has changed recently, the green LED lights instead. This can be because I checked items as done or even added new items. Either way, I am engaging with the tasks which is good.
 - When the program is restarted, the green light will always be on for the first three hours since there's nothing to compare it to. I could have persisted the previous counts but who cares.
 - When I press the button, the meaning of LEDs briefly changes to show how much progress I am making on my tasks.
--- First, the number of lights will indicate how I am doing overall:
---- 1 light = 25% of tasks done.
---- 2 lights = 50% done.
---- 3 lights = 75% done.
---- 4 lights = 100% done.
---- An LED will flash rather than steady on if I am close but not quite at the next percentage.
--- Then, the program will flash out the exact number of completed tasks: 
---- Each flash of the red LED indicates 10 tasks are done
---- Each flash of the green LED indicates one task done.
---- Example: 23 completed tasks, that will result in 2 red flashes and 3 green flashes.
+ - First, the number of lights will indicate how I am doing overall:
+  - 1 light = 25% of tasks done.
+  - 2 lights = 50% done.
+  - 3 lights = 75% done.
+  - 4 lights = 100% done.
+  - An LED will flash rather than steady on if I am close but not quite at the next percentage.
+ - Then, the program will flash out the exact number of completed tasks: 
+  - Each flash of the red LED indicates 10 tasks are done
+  - Each flash of the green LED indicates one task done.
+  - Example: 23 completed tasks, that will result in 2 red flashes and 3 green flashes.
 
 ### Refresh Frequency
 - By default, the code will poll for email, calendar and task list updates every hour. This is configurable.
