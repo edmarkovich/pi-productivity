@@ -18,12 +18,14 @@ If you want to make this for yourself, there are two technical hurdles to overco
 
 
 ## Hardware and Software
-This code expects a Raspberry Pi with Python 3, 4 LEDs and a switch button wired up to GPIO pins. If you're doing this, I assume you already know how to connect basic electronics (eg using resistors so your LEDs don't blow up) so I am not providing any guidance :)
-
-Otherwise, little code here is Pi specific - for example all the code that connects to APIs and applies logic to determine where attention is needed can be run on any system.
+Behold my creation!
 
 ![LED Closeup](pics/led-closeup.png)
 ![Shield Closeup](pics/shield-closeup.png)
+
+This code expects a Raspberry Pi with Python 3, 4 LEDs and a switch button wired up to GPIO pins. If you're doing this, I assume you already know how to connect basic electronics (eg using resistors so your LEDs don't blow up) so I am not providing any guidance :)
+
+Otherwise, little code here is Pi specific - for example all the code that connects to APIs and applies logic to determine where attention is needed can be run on any system.
 
 In my latest implementation, I soldered the electronics onto a shield board that attaches directly over the Pi. However, that's an aesthetic choice and mainly an excuse to solder. The functionality can be achieved using a solderless breadboard with a few resistors, LEDs and a button, as seen in this earlier [prorotype](pics/breadboard-closeup.png) (rubberband optional.)
 
