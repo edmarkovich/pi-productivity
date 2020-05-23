@@ -11,27 +11,16 @@ This is a personal project and requires some fiddling if you want to use it your
 
 This is useful if you think about your emails, appointments and tasks similar to how I do, which I briefly describe below. These aren't simple notifiers but carefully tailored strategic nudges. 
 
-## Warning
-If you want to make this for yourself, there are two technical hurdles to overcome.
-- Raspberry PI hardware stuff - if you have done simple things like connecting an LED to the Pi, you should be fine.
-- Dealing with the Google API dashboard to set up an 'application' that's permissioned for Gmail and Gcal, then going through Oauth flows manually to get the token to configure this program with. That only has to be done once but I found the learning curve steep (a few evenings.) See **configuration** section below.
-
-
-## Hardware and Software
-Behold my creation!
+The physical product looks like this in its final form. You can of course make it look however you want.
 
 ![LED Closeup](pics/led-closeup.png)
 ![Shield Closeup](pics/shield-closeup.png)
 
-This code expects a Raspberry Pi with Python 3, 4 LEDs and a switch button wired up to GPIO pins. If you're doing this, I assume you already know how to connect basic electronics (eg using resistors so your LEDs don't blow up) so I am not providing any guidance :)
 
-Otherwise, little code here is Pi specific - for example all the code that connects to APIs and applies logic to determine where attention is needed can be run on any system.
-
-In my latest implementation, I soldered the electronics onto a shield board that attaches directly over the Pi. However, that's an aesthetic choice and mainly an excuse to solder. The functionality can be achieved using a solderless breadboard with a few resistors, LEDs and a button, as seen in this earlier [prorotype](pics/breadboard-closeup.png) (rubberband optional.)
-
-- Gmail and Google Calendars are polled using REST APIs. It does not implement the Oath authentication workflows - you have to do that once yourself and provide the token to the program. See the **configuration** section below.
-- The task list is accessed using a simple HTTPS request and is therefore much simpler technically. If you want to use just the task functionality, you can comment out the other stuff. I will maybe make that configurable in the future.
-
+## Warning
+If you want to make this for yourself, there are two technical hurdles to overcome.
+- Raspberry PI hardware stuff - if you have done simple things like connecting an LED to the Pi, you should be fine.
+- Dealing with the Google API dashboard to set up an 'application' that's permissioned for Gmail and Gcal, then going through Oauth flows manually to get the token to configure this program with. That only has to be done once but I found the learning curve steep (a few evenings.) See **configuration** section below.
 
 ## Functionality
 
@@ -62,6 +51,15 @@ In my latest implementation, I soldered the electronics onto a shield board that
     - Each flash of the red LED indicates 10 tasks are done
     - Each flash of the green LED indicates one task done.
     - Example: 23 completed tasks, that will result in 2 red flashes and 3 green flashes.
+
+## Hardware
+This code expects a Raspberry Pi with Python 3, 4 LEDs and a switch button wired up to GPIO pins. If you're doing this, I assume you already know how to connect basic electronics (eg using resistors so your LEDs don't blow up) so I am not providing any guidance :) In my latest implementation, I soldered the electronics onto a shield board that attaches directly over the Pi. However, that's an aesthetic choice and mainly an excuse to solder. The functionality can be achieved using a solderless breadboard with a few resistors, LEDs and a button, as seen in this earlier [prorotype](pics/breadboard-closeup.png) (rubberband optional.)
+
+## Software
+Other than code dealing with lighting LEDs and processing button presses, nothing here is Pi-specific. All the code that connects to APIs and applies logic to determine where attention is needed can be run on any system with Python 3.
+
+- Gmail and Google Calendars are polled using REST APIs. It does not implement the Oath authentication workflows - you have to do that once yourself and provide the token to the program. See the **configuration** section below.
+- The task list is accessed using a simple HTTPS request and is therefore much simpler technically. If you want to use just the task functionality, you can comment out the other stuff. I will maybe make that configurable in the future.
 
 ### Refresh Frequency
 - By default, the code will poll for email, calendar and task list updates every hour. This is configurable.
