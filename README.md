@@ -9,12 +9,12 @@ I am more focused and productive with physical "nudges" in my environment pointi
 
 This is a personal project and requires some fiddling if you want to use it yourself. I call out what that takes in this file below (start with the **Warning**.) My goals were to create this for myself and to learn in the process. Both were achieved. I have this running on my desk at all times.
 
-This is really useful if you think about your emails, appointments and tasks slimilarly to how I do, which I briefly describe below. These aren't simple notifiers but carefully tailored strategic nudges. 
+This is useful if you think about your emails, appointments and tasks similar to how I do, which I briefly describe below. These aren't simple notifiers but carefully tailored strategic nudges. 
 
 ## Warning
-If you actually want to make this for yourself, there are two technical hurdles to overcome.
+If you want to make this for yourself, there are two technical hurdles to overcome.
 - Raspberry PI hardware stuff - if you have done simple things like connecting an LED to the Pi, you should be fine.
-- Dealing with the Google API dashboard to setup an 'application' that's permissioned for Gmail and Gcal, then going through Oauth flows manually to get the token to configure this program with. That only has to be done once but I found the learning curve steep (a few evenings.) See **configuration** section below.
+- Dealing with the Google API dashboard to set up an 'application' that's permissioned for Gmail and Gcal, then going through Oauth flows manually to get the token to configure this program with. That only has to be done once but I found the learning curve steep (a few evenings.) See **configuration** section below.
 
 
 ## Hardware and Software
@@ -25,9 +25,9 @@ Otherwise, little code here is Pi specific - for example all the code that conne
 ![LED Closeup](pics/led-closeup.png)
 ![Shield Closeup](pics/shield-closeup.png)
 
-In my latest implementation, I soldered the electronics onto a shield board that attaches directly over the Pi. However, that's an aesthetic choice and mainly an excuse to solder. The funcionality can be achieved using a solderless breadboard with a few resistors, LEDs and a button, as seen in this earlier [prorotype](pics/breadboard-closeup.png) (rubberband optional.)
+In my latest implementation, I soldered the electronics onto a shield board that attaches directly over the Pi. However, that's an aesthetic choice and mainly an excuse to solder. The functionality can be achieved using a solderless breadboard with a few resistors, LEDs and a button, as seen in this earlier [prorotype](pics/breadboard-closeup.png) (rubberband optional.)
 
-- Gmail and Google Calendars are polled using REST APIs. It does not implement the Oath authentication workflows - you have to do that once yourself and provide the token to the program. See configuration section below.
+- Gmail and Google Calendars are polled using REST APIs. It does not implement the Oath authentication workflows - you have to do that once yourself and provide the token to the program. See the **configuration** section below.
 - The task list is accessed using a simple HTTPS request and is therefore much simpler technically. If you want to use just the task functionality, you can comment out the other stuff. I will maybe make that configurable in the future.
 
 
@@ -36,8 +36,8 @@ In my latest implementation, I soldered the electronics onto a shield board that
 | Source | LED Action | Why |
 | :--- | :--- | :--- |
 | Gmail Inbox | Yellow LED is lit if any message is older than 24 hours | I archive messages as I read/respond to them. If a message sits in my inbox that long, it means I am resisting dealing with it. The yellow light calls me out.
-| Google Calendar | If an event exists on either calendar within the next 24 hours, a blue light comes on intermetedly. The frequency is proportional to time to event - from flashing briefly every few seconds when the event is far off, to steady on when the event is in progress | I don't use my personal calendar much so don't check it frequently. The blue light is signal that something is coming up, prompting me to check the calendar. 
-| TODO on Dropbox | Red light is on if the number of unfinished tasks has not changed in 3 hours. Otherwise the light is green | I should be paying attention to tasks I defined for myself earlier. If number of unfinished tasks has not changed, it's a sign I am neglecting this.
+| Google Calendar | If an event exists on either calendar within the next 24 hours, a blue light comes on intermittently. The frequency is proportional to time to event - from flashing briefly every few seconds when the event is far off, to steady on when the event is in progress | I don't use my personal calendar much so don't check it frequently. The blue light is a signal that something is coming up, prompting me to check the calendar. 
+| TODO on Dropbox | Red light is on if the number of unfinished tasks has not changed in 3 hours. Otherwise the light is green | I should be paying attention to tasks I defined for myself earlier. If the number of unfinished tasks has not changed, it's a sign I am neglecting this.
 | | On button press, the LEDs briefly indicate what percentage of all tasks are done, and flash the specific number of tasks done | This is both to provide a quick insight into my progress and to provide a fun/interactive aspect.
 
 ### Calendars
@@ -76,7 +76,7 @@ You must create a file called **secrets.py** which should define the following v
 TASKS_URL=""
 ```
 
-- IDs of your Google Calendars. In the simple case of personal calendar, the id is just your email address. Note, the program expects two calendars right now, I should really make this configurable.
+- IDs of your Google Calendars. In the simple case of a personal calendar, the id is just your email address. Note, the program expects two calendars right now, I should really make this configurable.
 
 ```
 CAL1=""
@@ -105,15 +105,8 @@ You can change settings in [src/config.py](src/config.py) to control:
 - Pattern to recognize done and undone tasks
 
 ## Running it
-- **Make sure to follow the configuration section above** or you will be instantly disapointed.
+- **Make sure to follow the configuration section above** or you will be instantly disappointed.
 - The basic way to run this is just `python3 src/productivity.py`
-- I run this on a headless Pi in a screen session. the `run` script is what I execute inside of screen. This redirects error and output into /tmp/productivity which I look at when troubleshooting.
-  - In order to save wear and tear on the SD card, my /tmp is mounted as a ram disk. 
+- I run this on a headless Pi in a screen session. the `run` script is what I execute inside of `screen`. This redirects error and output into `/tmp/productivity` which I look at when troubleshooting.
+  - In order to save wear and tear on the SD card, my `/tmp` is mounted as a ram disk. 
   - As I run the Pi headless, I execute a few other commands to minimize power draw and keep the Pi as cool as possible using the `low-power` script. This probably doesn't make any real difference.
-
-
-
-
-
-
-
