@@ -83,9 +83,9 @@ CAL2=""
 
 - These are set by following Google's OAUTH processes. See the link below, both to set up the API and authenticate using Curl or Postman. This documentation should help but it's quite fiddly.
 https://developers.google.com/identity/protocols/oauth2/native-app
-At the end of the day, you need to end up with a Google application
+At the end of the day, you need to end up with a Google application (client)
 permissioned for Gmail and Google Calendar, and an authenticated
-refresh token that you will define here.
+refresh token. Provide the following:
 
 ```
 REFRESH_TOKEN=""
@@ -96,7 +96,7 @@ CLIENT_SECRET=""
 ## src/config.py
 You can change settings in [src/config.py](src/config.py) to control:
 - Which GPIO pins the lights and button are wired to.
--- **Note: you must either use the same pins in your setup or change these settings** 
+  - **Note: you must either use the same pins in your setup or change these settings** 
 - Refresh frequency
 - Thresholds for the lights to come on
 - Pattern to recognize done and undone tasks
