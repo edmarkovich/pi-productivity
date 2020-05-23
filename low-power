@@ -1,4 +1,4 @@
-#Apparently these cause the PI to use less amps and thus heat up
+#Apparently these cause the PI to use fewer amps and stay cooler
 
 #Disable the USB chip
 echo '1-1' |sudo tee /sys/bus/usb/drivers/usb/unbind
@@ -9,6 +9,6 @@ sudo /opt/vc/bin/tvservice -o
 #Disable wired ethernet
 sudo ifconfig eth0 down 
 
-#Disable swap file - don't write to SD card.
+#Disable swap file - don't write to SD card. Not actually related to low power.
 sudo dphys-swapfile swapoff
 
