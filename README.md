@@ -59,7 +59,7 @@ If you want to make this for yourself, there are two technical hurdles to overco
 
 ## Hardware
 This code expects: 
-- Raspberry Pi with Python 3. I develop on Raspberry Pi 3 but should be fine with earlier versions.
+- Raspberry Pi with Python 3. I develop on Raspberry Pi 4 but should be fine with earlier versions.
 - 4 LEDs wired to GPIO pins via resistors. The defaul pins are listed/changed in [/src/config.py](/src/config.py)
 - Switch button wired up to GPIO pins. This isn't strictly needed. I use the button to show more information about tasks and force a data refresh.
 - Internet connectivity.
