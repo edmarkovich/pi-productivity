@@ -62,17 +62,20 @@ In my latest implementation, I soldered the electronics onto a shield board that
 - You can force a refresh by pressing and holding the button. Let go of the button once all lights are on solid.
 
 ## Configuration
-- You must create a file called **secrets.py** which should define the following variables:
--- The url of the tasks file somewhere on the web (eg in your Dropbox share)
+
+### src/secrets.py
+
+You must create a file called **secrets.py** which should define the following variables:
+- The url of the tasks file somewhere on the web (eg in your Dropbox share)
 
 **TASKS_URL=""**
 
--- IDs of your Google Calendars. In the simple case of personal, the id is just your email address.
+- IDs of your Google Calendars. In the simple case of personal, the id is just your email address.
 
 **CAL1=""**
 **CAL2=""**
 
--- These are set by following Google's OAUTH processes using Curl or Postman.
+- These are set by following Google's OAUTH processes using Curl or Postman.
 This documentation should help but it's quite fiddly.
 https://developers.google.com/identity/protocols/oauth2/native-app
 At the end of the day, you need to end up with a Google application
@@ -85,7 +88,8 @@ refresh token that you will define here.
 
 **CLIENT_SECRET=""**
 
--- You can change settings in  [src/config.py](src/config.py) to change:
+## src/config.py
+You can change settings in  [src/config.py](src/config.py) to change:
 - Which GPIO pins the lights and button are wired to. **Note: you must either use the same numbers in your setup or change these settings** 
 - Refresh frequency
 - Thresholds for the lights to come on

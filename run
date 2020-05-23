@@ -1,1 +1,1 @@
-python3 -u productivity.py &> /tmp/productivity.log
+python3 -u src/productivity.py &> /tmp/productivity.log

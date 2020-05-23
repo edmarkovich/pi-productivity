@@ -1,5 +1,14 @@
+#Apparently these cause the PI to use less amps and thus heat up
+
+#Disable the USB chip
 echo '1-1' |sudo tee /sys/bus/usb/drivers/usb/unbind
+
+#Disable video out if running headless
 sudo /opt/vc/bin/tvservice -o
+
+#Disable wired ethernet
 sudo ifconfig eth0 down 
+
+#Disable swap file - don't write to SD card.
 sudo dphys-swapfile swapoff
 
