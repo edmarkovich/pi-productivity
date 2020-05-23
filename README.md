@@ -81,8 +81,7 @@ CAL1=""
 CAL2=""
 ```
 
-- These are set by following Google's OAUTH processes using Curl or Postman.
-This documentation should help but it's quite fiddly.
+- These are set by following Google's OAUTH processes. See the link below, both to set up the API and authenticate using Curl or Postman. This documentation should help but it's quite fiddly.
 https://developers.google.com/identity/protocols/oauth2/native-app
 At the end of the day, you need to end up with a Google application
 permissioned for Gmail and Google Calendar, and an authenticated
