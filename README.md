@@ -1,14 +1,27 @@
 # pi-productivity
 
 
-![LED Closeup](pics/led-closeup.png)
-![Shield Closeup](pics/shield-closeup.png){:height="50%" width="50%"}
 
-<img src="https://github.com/edmarkovich/pi-productivity/blob/master/pics/shield-closeup.png" width="100" height="100">
 
 
 ## What does this do?
-I find that I stick to what I need to do better when there's a physical reminder in my space of something I need to be doing or paying attention to. This is a simple project that enables my Raspberry Pi 4 to indicate with state of 4 LED lights.
+I find that I stick to what I need to do better when there's a reminder in my space of something I need to be doing or paying attention to. A physical nudge. This is a simple project that enables my Raspberry Pi to reflect the state of my Inbox, Calendar, and to-do list using 4 LEDs. 
+
+If the green light is on, everything is great. If any other light is good, I should be paying attention to __something__.
+
+The nudges I implemented only make sense in the organizational approach I use. I describe it a bit below. You're welcome to try it or tweak it.
+
+## Hardware
+Out of the box, this code should run on any Raspberry Pi with Python 3, 4 LEDs and an optional switch button wired up to configurable GPIO pins. If you're doing this, I assume you already know how to connect basic electronics (eg using resistors so your LEDs don't blow up.) However, relatively little code here is Raspberry-Pi specific - for example all the code that connects to APIs and applies logic to determine if some area of my productivity system needs attention can run on anything. 
+
+![LED Closeup](pics/led-closeup.png)
+![Shield Closeup](pics/shield-closeup.png)
+
+In my personal implementation, I soldered the electronics onto a shield board that attached directly over the Pi. However, that's purely an aesthetic choice (and an excuse to buy these boards and solder.) Previously, a solderless breadboard rubber-banded to the PI worked just as well. 3-led earlier version shown:
+
+
+![Breadboard Closeup](pics/breadboard-closeup.png)
+
 
 ### Personal Setup
 The things that I want to personally be aware of:
