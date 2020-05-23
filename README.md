@@ -120,6 +120,6 @@ You can change settings in [src/config.py](src/config.py) to control:
 ## Running it
 - **Make sure to follow the configuration section above** or you will be instantly disappointed.
 - The basic way to run this is just `python3 src/productivity.py`
-- I run this on a headless Pi in a screen session. the `run` script is what I execute inside of `screen`. This redirects error and output into `/tmp/productivity` which I look at when troubleshooting.
+- I run this on a headless Pi in a `screen` session. the [run](run) script is what I execute inside of `screen`. This redirects error and output into `/tmp/productivity` which I look at when troubleshooting.
   - In order to save wear and tear on the SD card, my `/tmp` is mounted as a ram disk. 
-  - As I run the Pi headless, I execute a few other commands to minimize power draw and keep the Pi as cool as possible using the `low-power` script. This probably doesn't make any real difference.
+  - As I run the Pi headless, I execute a few other commands to minimize power draw and keep the Pi as cool as possible using the [low-power](low-power) script. This likely doesn't make any actual difference.
