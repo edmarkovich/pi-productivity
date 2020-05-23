@@ -1,5 +1,9 @@
 # pi-productivity
 
+
+![LED Closeup](pics/led-closeup.png)
+
+
 ## What does this do?
 I find that I stick to what I need to do better when there's a physical reminder in my space of something I need to be doing or paying attention to. This is a simple project that enables my Raspberry Pi 4 to indicate with state of 4 LED lights.
 
