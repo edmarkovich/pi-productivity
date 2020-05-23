@@ -7,7 +7,13 @@
 ## What is this?
 I am more focused and productive with physical "nudges" in my environment pointing where I should be paying attention. This software/hardware combination parses my **Gmail Inbox, Google Calendars and To-Do File in Dropbox** and uses **LED lights attached to a Raspberry Pi** to raise flags to neglected areas.
 
-This is only really useful if you think about your emails, appointments and tasks limilarly to how I do. I will provide a brief overview of my approach below.
+This is really useful if you think about your emails, appointments and tasks limilarly to how I do. These aren't simple notifiers but carefully tailored strategic nudges.
+
+## Warning
+If you actually want to make this for yourself, there are two technical challenges to overcome
+- Raspberry PI hardware stuff - if you have done simple things like connecting an LED to the Pi, you should be fine.
+- Dealing with the Google API dashboard to setup an 'application' that's permissioned for Gmail and Gcal, then going through Oauth flows once using postman or curl. See configuration section below.
+
 
 ## Hardware and Software
 Out of the box, this code should run on any Raspberry Pi with Python 3, 4 LEDs and an optional switch button wired up to configurable GPIO pins. If you're doing this, I assume you already know how to connect basic electronics (eg using resistors so your LEDs don't blow up.) However, relatively little code here is Raspberry-Pi specific - for example all the code that connects to APIs and applies logic to determine where attention is needed can be run on any system.
@@ -45,9 +51,11 @@ The blue LED behavior is actually connected to a pair of calendars - my personal
 You should create a file called secrets.py which should define the following variables:
 
 The url of the tasks file somewhere on the web (eg in your Dropbox share)
-** TASKS_URL="" **
+
+**TASKS_URL=""**
 
 IDs of your Google Calendars. In the simple case of personal, the id is just your email address.
+
 **CAL1=""**
 **CAL2=""**
 
@@ -59,7 +67,9 @@ permissioned for Gmail and Google Calendar, and an authenticated
 refresh token that you will define here.
 
 **REFRESH_TOKEN=""**
+
 **CLIENT_ID=""**
+
 **CLIENT_SECRET=""**
 
 
