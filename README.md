@@ -48,16 +48,16 @@ In my latest implementation, I soldered the electronics onto a shield board that
 - If the number has changed recently, the green LED lights instead. This can be because I checked items as done or even added new items. Either way, I am engaging with the tasks which is good.
 - When the program is restarted, the green light will always be on for the first three hours since there's nothing to compare it to. I could have persisted the previous counts but who cares.
 - When I press the button, the meaning of LEDs briefly changes to show how much progress I am making on my tasks.
- - First, the number of lights will indicate how I am doing overall:
-  - 1 light = 25% of tasks done.
-  - 2 lights = 50% done.
-  - 3 lights = 75% done.
-  - 4 lights = 100% done.
-  - An LED will flash rather than steady on if I am close but not quite at the next percentage.
- - Then, the program will flash out the exact number of completed tasks: 
-  - Each flash of the red LED indicates 10 tasks are done
-  - Each flash of the green LED indicates one task done.
-  - Example: 23 completed tasks, that will result in 2 red flashes and 3 green flashes.
+  - First, the number of lights will indicate how I am doing overall:
+    - 1 light = 25% of tasks done.
+    - 2 lights = 50% done.
+    - 3 lights = 75% done.
+    - 4 lights = 100% done.
+    - An LED will flash rather than steady on if I am close but not quite at the next percentage.
+  - Then, the program will flash out the exact number of completed tasks: 
+    - Each flash of the red LED indicates 10 tasks are done
+    - Each flash of the green LED indicates one task done.
+    - Example: 23 completed tasks, that will result in 2 red flashes and 3 green flashes.
 
 ### Refresh Frequency
 - By default, the code will poll for email, calendar and task list updates every hour. This is configurable.
