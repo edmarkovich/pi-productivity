@@ -7,12 +7,14 @@
 ## What is this?
 I am more focused and productive with physical "nudges" in my environment pointing where I should be paying attention. This software/hardware combination parses my **Gmail Inbox, Google Calendars and To-Do File in Dropbox** and uses **LED lights attached to a Raspberry Pi** to flag neglected areas.
 
+This is a personal project and requires some fiddling if you want to use it yourself. I call out what that takes in this file below (start with the **Warning**.) My goal was both to create this for myself and to learn in the process and both were achieved. Do I have this running on my desk at all times.
+
 This is really useful if you think about your emails, appointments and tasks slimilarly to how I do, which I briefly describe below. These aren't simple notifiers but carefully tailored strategic nudges.
 
 ## Warning
 If you actually want to make this for yourself, there are two technical hurdles to overcome.
 - Raspberry PI hardware stuff - if you have done simple things like connecting an LED to the Pi, you should be fine.
-- Dealing with the Google API dashboard to setup an 'application' that's permissioned for Gmail and Gcal, then going through Oauth flows manually to get the token to configure this program with. That only has to be done once but I found the learning curve steep (a few days.) See **configuration** section below.
+- Dealing with the Google API dashboard to setup an 'application' that's permissioned for Gmail and Gcal, then going through Oauth flows manually to get the token to configure this program with. That only has to be done once but I found the learning curve steep (a few evenings.) See **configuration** section below.
 
 
 ## Hardware and Software
@@ -94,12 +96,24 @@ CLIENT_ID=""
 CLIENT_SECRET=""
 ```
 
-## src/config.py
+### src/config.py
 You can change settings in [src/config.py](src/config.py) to control:
 - Which GPIO pins the lights and button are wired to.
   - **Note: you must either use the same pins in your setup or change these settings** 
 - Refresh frequency
 - Thresholds for the lights to come on
 - Pattern to recognize done and undone tasks
+
+## Running it
+- **Make sure to follow the configuration section above** or you will be instantly disapointed.
+- The basic way to run this is just `python3 src/productivity.py`
+- I run this on a headless Pi in a screen session. the `run` script is what I execute inside of screen. This redirects error and output into /tmp/productivity which I look at when troubleshooting.
+  - In order to save wear and tear on the SD card, my /tmp is mounted as a ram disk. 
+  - As I run the Pi headless, I execute a few other commands to minimize power draw and keep the Pi as cool as possible using the `low-power` script. This probably doesn't make any real difference.
+
+
+
+
+
 
 
