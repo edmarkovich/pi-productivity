@@ -7,11 +7,9 @@
 ## What is this?
 I am more focused and productive with physical "nudges" in my environment pointing where I should be paying attention. This software/hardware combination parses my **Gmail Inbox, Google Calendars and To-Do File in Dropbox** and uses **LED lights attached to a Raspberry Pi** to flag neglected areas.
 
-This is a personal project and requires some fiddling if you want to use it yourself. I call out what that takes in this file below (start with the **Warning**.) My goals were to create this for myself and to learn in the process. Both were achieved. I have this running on my desk at all times.
+This is a personal hardware/software project and requires some fiddling if you want to use it yourself. I call out what that takes in this file (start with the **Warning**.) My goals were to create this for myself and to learn in the process. Both were achieved. I have this running on my desk all the time. It's useful if you think about productivity similar to me. I briefly describe my philosphy in the **Functionality** section.
 
-This is useful if you think about your emails, appointments and tasks similar to how I do, which I briefly describe below. These aren't simple notifiers but carefully tailored strategic nudges. 
-
-The physical product looks like this in its final form. You can of course make it look however you want.
+The physical product looks like this. You can of course make it look however you want.
 
 ![LED Closeup](pics/led-closeup.png)
 ![Shield Closeup](pics/shield-closeup.png)
@@ -19,22 +17,29 @@ The physical product looks like this in its final form. You can of course make i
 
 ## Warning
 If you want to make this for yourself, there are two technical hurdles to overcome.
-- Raspberry PI hardware stuff - if you have done simple things like connecting an LED to the Pi, you should be fine.
-- Dealing with the Google API dashboard to set up an 'application' that's permissioned for Gmail and Gcal, then going through Oauth flows manually to get the token to configure this program with. That only has to be done once but I found the learning curve steep (a few evenings.) See **configuration** section below.
+- Raspberry PI hardware stuff - if you can wire up an LED and a button, you will be fine.
+- Google API/Oauth setup - only has to be done once but I found the learning curve steep (a few evenings.) See **configuration** section below.
 
 ## Functionality
 
-| Source | LED Action | Why |
+### At a Glance
+
+| Source | LED Action | Philosophy |
 | :--- | :--- | :--- |
 | Gmail Inbox | Yellow LED is lit if any message is older than 24 hours | I archive messages as I read/respond to them. If a message sits in my inbox that long, it means I am resisting dealing with it. The yellow light calls me out.
 | Google Calendar | If an event exists on either calendar within the next 24 hours, a blue light comes on intermittently. The frequency is proportional to time to event - from flashing briefly every few seconds when the event is far off, to steady on when the event is in progress | I don't use my personal calendar much so don't check it frequently. The blue light is a signal that something is coming up, prompting me to check the calendar. 
 | TODO on Dropbox | Red light is on if the number of unfinished tasks has not changed in 3 hours. Otherwise the light is green | I should be paying attention to tasks I defined for myself earlier. If the number of unfinished tasks has not changed, it's a sign I am neglecting this.
 | | On button press, the LEDs briefly indicate what percentage of all tasks are done, and flash the specific number of tasks done | This is both to provide a quick insight into my progress and to provide a fun/interactive aspect.
 
-### Calendars
+### Functionality Details and Caveats
+
+#### Gmail
+- The way Gmail works, if any message from a thread is in your Inbox, all messages from that thread are in your inbox. Thus a new message may pull old messages from the thread back in, and so the yellow light will come on next time time the program refreshes. I haven't found this to be a frequent occurance.
+
+#### Calendars
 - The blue LED behavior is driven by a pair of calendars - my personal and one I share with my wife. The frequency of the light is based on how far away the soonest event is on either calendar. If neither calendar has an event in the next 24 hours, the blue light is off.
 
-### TODO List
+#### TODO List
 - I synch my todo list using Dropbox, and this program pulls it over HTTPS. So there's nothing Dropbox specific about the implementation. It can be any file accessible over the web.
 - My TODO list is a free-form file, actually an ASCII table, though yours doesn't have to be. This program considers any line with characters "[ ]" (bracket-space-bracket) in it as an undone item, and any line with "[X]" as a done item.  Both of these patterns are configurable.
 - On each refresh, the program checks the number of currently-undone tasks to the previous number. If the number hasn't changed in 3 hours (this is configurable), it lights up the red LED.
