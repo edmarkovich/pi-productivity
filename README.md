@@ -62,7 +62,8 @@ This code expects:
 - Raspberry Pi with Python 3. I develop on Raspberry Pi 3 but should be fine with earlier versions.
 - 4 LEDs wired to GPIO pins via resistors. The defaul pins are listed/changed in [/src/config.py](/src/config.py)
 - Switch button wired up to GPIO pins. This isn't strictly needed. I use the button to show more information about tasks and force a data refresh.
-- Internet connectivity
+- Internet connectivity.
+
 If you're doing this, I assume you already know how to connect basic electronics (eg using resistors so your LEDs don't blow up) so I am not providing any guidance 🙂
 
 In my latest implementation, I soldered the electronics onto a shield board that attaches directly over the Pi. However, that's an aesthetic choice and mainly an excuse to solder. The functionality can be achieved using a solderless breadboard with a few resistors, LEDs and a button, as seen in this earlier [prorotype](pics/breadboard-closeup.png) (rubberband optional.)
