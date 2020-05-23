@@ -16,7 +16,7 @@ If you actually want to make this for yourself, there are two technical hurdles 
 
 
 ## Hardware and Software
-Out of the box, this code should run on any Raspberry Pi with Python 3, 4 LEDs and a switch button wired up to GPIO pins. If you're doing this, I assume you already know how to connect basic electronics (eg using resistors so your LEDs don't blow up.)
+This code expects a Raspberry Pi with Python 3, 4 LEDs and a switch button wired up to GPIO pins. If you're doing this, I assume you already know how to connect basic electronics (eg using resistors so your LEDs don't blow up) so I am not providing any guidance :)
 
 Otherwise, little code here is Pi specific - for example all the code that connects to APIs and applies logic to determine where attention is needed can be run on any system.
 
@@ -25,6 +25,8 @@ Otherwise, little code here is Pi specific - for example all the code that conne
 
 In my latest implementation, I soldered the electronics onto a shield board that attaches directly over the Pi. However, that's an aesthetic choice and mainly an excuse to solder. The funcionality can be achieved using a solderless breadboard with a few resistors, LEDs and a button, as seen in this earlier [prorotype](pics/breadboard-closeup.png) (rubberband optional.)
 
+- Gmail and Google Calendars are polled using REST APIs. It does not implement the Oath authentication workflows - you have to do that once yourself and provide the token to the program. See configuration section below.
+- The task list is accessed using a simple HTTPS request and is therefore much simpler technically. If you want to use just the task functionality, you can comment out the other stuff. I will maybe make that configurable in the future.
 
 
 ## Functionality
@@ -72,7 +74,7 @@ You must create a file called **secrets.py** which should define the following v
 TASKS_URL=""
 ```
 
-- IDs of your Google Calendars. In the simple case of personal, the id is just your email address.
+- IDs of your Google Calendars. In the simple case of personal calendar, the id is just your email address. Note, the program expects two calendars right now, I should really make this configurable.
 
 ```
 CAL1=""
@@ -93,8 +95,9 @@ CLIENT_SECRET=""
 ```
 
 ## src/config.py
-You can change settings in  [src/config.py](src/config.py) to change:
-- Which GPIO pins the lights and button are wired to. **Note: you must either use the same numbers in your setup or change these settings** 
+You can change settings in [src/config.py](src/config.py) to control:
+- Which GPIO pins the lights and button are wired to.
+-- **Note: you must either use the same pins in your setup or change these settings** 
 - Refresh frequency
 - Thresholds for the lights to come on
 - Pattern to recognize done and undone tasks
