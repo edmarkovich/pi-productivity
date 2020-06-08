@@ -39,7 +39,9 @@ def good_with_tasks(count):
         previous_count_time = now
         return True
     else:
-        diffHours = (now - previous_count_time).seconds / 60 / 60
+        diff      = now - previous_count_time
+        diffHours = diff.seconds / 60 / 60
+        diffHours = diffHours + (diff.days * 24)
         weGood    = diffHours <  config.tasksInactivityThresholdHours
         print ("good_with_tasks: hours since last count change:",
                diffHours, weGood)
