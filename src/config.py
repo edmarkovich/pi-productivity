@@ -9,6 +9,9 @@ emailAgeThresholdHours = 24
 # older than this will not cause the light to blink
 calendarDaysOfNotice   = 1
 
+# If calendar event contains this text in summary, don't notify for it
+calendarEventsToSkip   = "Jamie Class"
+
 # How to recognize done and undone tasks
 tasksDoneLineContains   = "[X]"
 tasksUnDoneLineContains = "[ ]"

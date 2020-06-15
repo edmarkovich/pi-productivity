@@ -80,24 +80,28 @@ def get_calendar_time_to_event(token, cal):
         print("get_calendar_time_to_event: ", r.status_code, r.text)
         return 999
 
-    if len(r.json()['items']) == 0:
-        print("get_calendar_time_to_event: no events")
-        return 999
 
-    if 'dateTime' in r.json()['items'][0]['start']:
-        start_time = r.json()['items'][0]['start']['dateTime']
-        start_time = datetime.datetime.strptime(start_time, 
-            "%Y-%m-%dT%H:%M:%S%z")
-    else:
-        start_time = r.json()['items'][0]['start']['date']
-        start_time = datetime.datetime.strptime(start_time+"T00:00:00-04:00", 
-            "%Y-%m-%dT%H:%M:%S%z")
+    for item in r.json()['items']:
+        if config.calendarEventsToSkip in item['summary']:
+            print ("Skipping item with ",  config.calendarEventsToSkip)
+            continue
 
-    diff = start_time - datetime.datetime.now(timezone.utc)
-    out = (diff.days*24 + diff.seconds/(60*60))
-    print("get_calendar_time_to_event: event in hours: ", out)
-    return out
+        if 'dateTime' in item['start']:
+            start_time = item['start']['dateTime']
+            start_time = datetime.datetime.strptime(start_time, 
+                "%Y-%m-%dT%H:%M:%S%z")
+        else:
+            start_time = item['start']['date']
+            start_time = datetime.datetime.strptime(
+                start_time+"T00:00:00-04:00", "%Y-%m-%dT%H:%M:%S%z")
+
+        diff = start_time - datetime.datetime.now(timezone.utc)
+        out = (diff.days*24 + diff.seconds/(60*60))
+        print("get_calendar_time_to_event: event in hours: ", out)
+        return out
     
+    print("get_calendar_time_to_event: no events")
+    return 999
     
 def get_task_state():
     headers = {"User-Agent": "curl/7.51.0"}
