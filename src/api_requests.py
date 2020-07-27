@@ -105,7 +105,7 @@ def get_calendar_time_to_event(token, cal):
     
 def get_task_state():
     headers = {"User-Agent": "curl/7.51.0",
-               "Authorization": "token "+secret.TASKS_TOKEN,
+               "Authorization": "token "+secrets.TASKS_TOKEN,
                "Accept": "application/vnd.github.v3.raw"}
     r =requests.get(secrets.TASKS_URL, headers=headers)
     if r.status_code != 200:
