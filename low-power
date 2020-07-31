@@ -6,9 +6,11 @@ echo '1-1' |sudo tee /sys/bus/usb/drivers/usb/unbind
 #Disable video out if running headless
 sudo /opt/vc/bin/tvservice -o
 
-#Disable wired ethernet
+#Disable wired ethernet. Off by default on B+?
 sudo ifconfig eth0 down 
 
 #Disable swap file - don't write to SD card. Not actually related to low power.
 sudo dphys-swapfile swapoff
+
+/opt/vc/bin/vcgencmd measure_temp
 
