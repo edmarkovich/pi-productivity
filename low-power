@@ -12,5 +12,10 @@ sudo ifconfig eth0 down
 #Disable swap file - don't write to SD card. Not actually related to low power.
 sudo dphys-swapfile swapoff
 
+#Disable onboard LEDs
+echo none | sudo tee /sys/class/leds/led0/trigger
+echo none | sudo tee /sys/class/leds/led1/trigger
+
+
 /opt/vc/bin/vcgencmd measure_temp
 
